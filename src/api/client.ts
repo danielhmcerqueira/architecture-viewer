@@ -1,16 +1,106 @@
-import { API_BASE_URL } from "@/config";
+// Camada ÚNICA que fala com dados. Componentes SEMPRE importam daqui —
+// nunca de src/mocks/*.
+//
+// Enquanto USE_MOCKS = true, todas as funções devolvem os mocks estáticos
+// com um atraso simulado de 600ms. Quando o backend estiver disponível,
+// troque USE_MOCKS para false e implemente os blocos `// TODO(real)`
+// usando fetch contra `${API_BASE_URL}${path}`.
 
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    public status: number,
-    public body?: unknown,
-  ) {
-    super(message);
-    this.name = "ApiError";
-  }
+import { API_BASE_URL } from "@/config";
+import {
+  sampleArchitecture,
+  sampleProjects,
+} from "@/mocks/architecture.sample";
+import type {
+  ArchitectureSpec,
+  ProjectSummary,
+} from "@/types/architecture";
+
+export const USE_MOCKS = true;
+
+const MOCK_DELAY_MS = 600;
+
+function delay<T>(value: T): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(value), MOCK_DELAY_MS));
 }
 
+// Clone raso para simular a fronteira de rede: consumidores nunca devem
+// mutar o objeto de mock em memória.
+function clone<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
+export interface CreateProjectInput {
+  name: string;
+  notes: string;
+}
+
+export interface CreateProjectResponse {
+  id: string;
+}
+
+// ---- API ---------------------------------------------------------------
+
+export async function createProject(
+  input: CreateProjectInput,
+): Promise<CreateProjectResponse> {
+  if (USE_MOCKS) {
+    const id = `mock-${Date.now().toString(36)}`;
+    return delay({ id });
+  }
+  // TODO(real):
+  // return apiFetch<CreateProjectResponse>("/projects", {
+  //   method: "POST",
+  //   body: JSON.stringify(input),
+  // });
+  void API_BASE_URL;
+  void input;
+  throw new Error("Backend real ainda não conectado.");
+}
+
+export async function getArchitecture(
+  projectId: string,
+): Promise<ArchitectureSpec> {
+  if (USE_MOCKS) {
+    const spec = clone(sampleArchitecture);
+    spec.project.id = projectId;
+    return delay(spec);
+  }
+  // TODO(real):
+  // return apiFetch<ArchitectureSpec>(`/projects/${projectId}/architecture`);
+  throw new Error("Backend real ainda não conectado.");
+}
+
+export async function listProjects(): Promise<ProjectSummary[]> {
+  if (USE_MOCKS) return delay(clone(sampleProjects));
+  // TODO(real):
+  // return apiFetch<ProjectSummary[]>("/projects");
+  throw new Error("Backend real ainda não conectado.");
+}
+
+export async function approveArchitecture(
+  projectId: string,
+  approver: string,
+): Promise<ArchitectureSpec> {
+  if (USE_MOCKS) {
+    const spec = clone(sampleArchitecture);
+    spec.project.id = projectId;
+    spec.project.status = "APPROVED";
+    return delay(spec);
+  }
+  // TODO(real):
+  // return apiFetch<ArchitectureSpec>(`/projects/${projectId}/approve`, {
+  //   method: "POST",
+  //   body: JSON.stringify({ approver }),
+  // });
+  void approver;
+  throw new Error("Backend real ainda não conectado.");
+}
+
+// ---- Utilitário reservado para o modo real ------------------------------
+
+// Mantido pronto para quando USE_MOCKS virar false. NÃO é usado enquanto
+// o modo mock estiver ativo.
 export async function apiFetch<T>(
   path: string,
   init: RequestInit = {},
@@ -22,21 +112,7 @@ export async function apiFetch<T>(
       ...(init.headers ?? {}),
     },
   });
-  if (!res.ok) {
-    let body: unknown;
-    try {
-      body = await res.json();
-    } catch {
-      /* noop */
-    }
-    throw new ApiError(`Requisição falhou (${res.status})`, res.status, body);
-  }
+  if (!res.ok) throw new Error(`Requisição falhou (${res.status})`);
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
-}
-
-export async function apiFetchBlob(path: string, init: RequestInit = {}): Promise<Blob> {
-  const res = await fetch(`${API_BASE_URL}${path}`, init);
-  if (!res.ok) throw new ApiError(`Requisição falhou (${res.status})`, res.status);
-  return await res.blob();
 }
