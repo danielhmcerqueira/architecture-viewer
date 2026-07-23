@@ -90,7 +90,7 @@ function NewProjectPage() {
               </span>{" "}
               inteira.
             </h1>
-            <p className="mt-3 max-w-xl text-xs leading-relaxed opacity-90 sm:text-sm">
+            <p className="mt-3 max-w-xl text-sm leading-relaxed opacity-90 sm:text-base">
               Cole suas anotações técnicas. O sistema estrutura os
               componentes, aponta conflitos e prepara o desenho — sem
               decidir por você o que ainda está incerto.
