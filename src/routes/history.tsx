@@ -115,8 +115,12 @@ function HistoryPage() {
         actions={
           <Button
             asChild
-            className={iebtPrimaryButtonClass}
-            style={iebtPrimaryButtonStyle}
+            className="h-11 gap-2 rounded-none px-5 font-mono text-[11px] uppercase tracking-[0.24em] shadow-none transition-colors hover:bg-[var(--iebt-ink)] hover:text-[var(--iebt-paper)]"
+            style={{
+              background: "var(--iebt-paper)",
+              color: "var(--iebt-ink)",
+              border: "2px solid var(--iebt-ink)",
+            }}
           >
             <Link to="/">
               <FilePlus2 className="h-4 w-4" /> Novo projeto
