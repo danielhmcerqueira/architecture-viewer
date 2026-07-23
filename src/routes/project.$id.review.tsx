@@ -170,63 +170,116 @@ function ReviewScreen({
   }
 
   return (
-    <div className="pb-24">
-      <ProjectHeader />
+    <div>
+      <PageHero
+        index="/02"
+        title={
+          <>
+            {draft.project.name} —{" "}
+            <span className="inline-flex items-baseline gap-2">
+              revisão
+              <span
+                aria-hidden
+                className="inline-block h-5 w-5 translate-y-0.5 sm:h-6 sm:w-6"
+                style={{ background: "var(--iebt-ink)" }}
+              />
+            </span>
+          </>
+        }
+        description="Ajuste componentes, relações e evidências. Cada salvar gera uma nova versão no backend."
+      />
+      <StatusStrip
+        left={<>arquitetura · v{draft.project.version}</>}
+        right={
+          isDirty
+            ? "alterações não salvas"
+            : draft.project.status === "APPROVED"
+              ? "aprovada"
+              : "sem pendências"
+        }
+      />
 
-      <Tabs value={tab} onValueChange={setTab} className="mt-6">
-        <TabsList className="flex flex-wrap gap-1">
-          <TabsTrigger value="overview">Visão geral</TabsTrigger>
-          <TabsTrigger value="components">
-            Componentes
-            <Badge variant="secondary" className="ml-2">
-              {draft.components.length}
-            </Badge>
-          </TabsTrigger>
-          <TabsTrigger value="relations">
-            Relações
-            <Badge variant="secondary" className="ml-2">
-              {draft.relations.length}
-            </Badge>
-          </TabsTrigger>
-          <TabsTrigger value="environments">Ambientes</TabsTrigger>
-          <TabsTrigger value="assumptions">Premissas</TabsTrigger>
-          <TabsTrigger value="gaps">
-            Lacunas
-            {openGaps.length > 0 && (
-              <Badge className="ml-2 bg-amber-500 text-white hover:bg-amber-500">
-                {openGaps.length}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="evidence">Evidências</TabsTrigger>
-        </TabsList>
+      <section
+        className="px-6 pb-28 pt-8"
+        style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
+      >
+        <div className="mx-auto max-w-5xl space-y-6">
+          <ProjectHeader />
 
-        <TabsContent value="overview" className="mt-4">
-          <OverviewPanel
-            spec={draft}
-            openGapsCount={openGaps.length}
-            onGoToGaps={() => setTab("gaps")}
-          />
-        </TabsContent>
-        <TabsContent value="components" className="mt-4">
-          <ComponentsTable />
-        </TabsContent>
-        <TabsContent value="relations" className="mt-4">
-          <RelationsTable />
-        </TabsContent>
-        <TabsContent value="environments" className="mt-4">
-          <EnvironmentsPanel />
-        </TabsContent>
-        <TabsContent value="assumptions" className="mt-4">
-          <AssumptionsList />
-        </TabsContent>
-        <TabsContent value="gaps" className="mt-4">
-          <GapsPanel />
-        </TabsContent>
-        <TabsContent value="evidence" className="mt-4">
-          <EvidenceList evidence={draft.evidence} components={draft.components} />
-        </TabsContent>
-      </Tabs>
+          <Tabs value={tab} onValueChange={setTab}>
+            <TabsList
+              className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-none border-2 bg-white p-1"
+              style={{ borderColor: "var(--iebt-ink)" }}
+            >
+              <IebtTabTrigger value="overview">Visão geral</IebtTabTrigger>
+              <IebtTabTrigger value="components">
+                Componentes
+                <Badge
+                  variant="secondary"
+                  className="ml-2 rounded-none font-mono"
+                >
+                  {draft.components.length}
+                </Badge>
+              </IebtTabTrigger>
+              <IebtTabTrigger value="relations">
+                Relações
+                <Badge
+                  variant="secondary"
+                  className="ml-2 rounded-none font-mono"
+                >
+                  {draft.relations.length}
+                </Badge>
+              </IebtTabTrigger>
+              <IebtTabTrigger value="environments">Ambientes</IebtTabTrigger>
+              <IebtTabTrigger value="assumptions">Premissas</IebtTabTrigger>
+              <IebtTabTrigger value="gaps">
+                Lacunas
+                {openGaps.length > 0 && (
+                  <span
+                    className="ml-2 inline-flex items-center px-1.5 py-0.5 font-mono text-[10px] tracking-wider"
+                    style={{
+                      background: "var(--iebt-orange)",
+                      color: "var(--iebt-paper)",
+                    }}
+                  >
+                    {openGaps.length}
+                  </span>
+                )}
+              </IebtTabTrigger>
+              <IebtTabTrigger value="evidence">Evidências</IebtTabTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="mt-4">
+              <OverviewPanel
+                spec={draft}
+                openGapsCount={openGaps.length}
+                onGoToGaps={() => setTab("gaps")}
+              />
+            </TabsContent>
+            <TabsContent value="components" className="mt-4">
+              <ComponentsTable />
+            </TabsContent>
+            <TabsContent value="relations" className="mt-4">
+              <RelationsTable />
+            </TabsContent>
+            <TabsContent value="environments" className="mt-4">
+              <EnvironmentsPanel />
+            </TabsContent>
+            <TabsContent value="assumptions" className="mt-4">
+              <AssumptionsList />
+            </TabsContent>
+            <TabsContent value="gaps" className="mt-4">
+              <GapsPanel />
+            </TabsContent>
+            <TabsContent value="evidence" className="mt-4">
+              <EvidenceList
+                evidence={draft.evidence}
+                components={draft.components}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </section>
 
       <SaveRevisionBar
         isDirty={isDirty}
@@ -250,6 +303,23 @@ function ReviewScreen({
         }}
       />
     </div>
+  );
+}
+
+function IebtTabTrigger({
+  value,
+  children,
+}: {
+  value: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <TabsTrigger
+      value={value}
+      className="rounded-none border-0 bg-transparent px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] data-[state=active]:bg-[var(--iebt-ink)] data-[state=active]:text-[var(--iebt-paper)] data-[state=active]:shadow-none"
+    >
+      {children}
+    </TabsTrigger>
   );
 }
 
