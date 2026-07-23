@@ -7,7 +7,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
 import { useProgressEvents } from "@/hooks/useProgressEvents";
-import { ACTIVE_SSE_SCENARIO } from "@/mocks/scenarios";
+import { getActiveMockScenario() } from "@/api/events";
 
 export const Route = createFileRoute("/dev/sse")({
   head: () => ({
@@ -44,7 +44,7 @@ function DevSseSandbox() {
         <h1 className="text-2xl font-semibold tracking-tight">Dev · SSE</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Cenário ativo:{" "}
-          <span className="font-mono">{ACTIVE_SSE_SCENARIO}</span> — altere em{" "}
+          <span className="font-mono">{getActiveMockScenario()}</span> — altere em{" "}
           <span className="font-mono">src/mocks/scenarios.ts</span>.
         </p>
       </header>
