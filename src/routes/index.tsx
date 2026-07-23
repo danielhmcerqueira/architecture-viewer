@@ -71,12 +71,6 @@ function NewProjectPage() {
         <PixelField />
 
         <div className="relative mx-auto flex max-w-3xl flex-col gap-4">
-          <div className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.28em] opacity-90">
-            <PixelMark />
-            <span>iebt innovation</span>
-            <span aria-hidden className="h-px w-8 bg-current opacity-40" />
-            <span>arquiteto</span>
-          </div>
 
           <div>
             <h1 className="font-mono text-2xl font-bold leading-[1.1] tracking-tight sm:text-3xl">
