@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { createProject } from "@/api/client";
@@ -26,6 +26,15 @@ function NewProjectPage() {
   const [name, setName] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const notesRef = useRef<HTMLTextAreaElement>(null);
+
+  // Cresce a textarea conforme o conteúdo, respeitando o mínimo do CSS.
+  useEffect(() => {
+    const el = notesRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [notes]);
 
   const { lines, chars } = useMemo(() => {
     const c = notes.length;
@@ -81,12 +90,13 @@ function NewProjectPage() {
           </div>
           <Textarea
             id="notes"
+            ref={notesRef}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            rows={28}
+            rows={12}
             spellCheck={false}
             placeholder={`Descreva componentes, integrações, ambientes, restrições…\nUma ideia por linha ajuda a leitura posterior.`}
-            className="min-h-[520px] resize-y font-mono text-sm leading-6"
+            className="min-h-[260px] resize-none overflow-hidden font-mono text-sm leading-6"
           />
         </div>
 
