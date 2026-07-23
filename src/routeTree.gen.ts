@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DevSseRouteImport } from './routes/dev.sse'
 import { Route as ProjectIdReviewRouteImport } from './routes/project.$id.review'
 import { Route as ProjectIdDiagramRouteImport } from './routes/project.$id.diagram'
 
@@ -22,6 +23,11 @@ const HistoryRoute = HistoryRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevSseRoute = DevSseRouteImport.update({
+  id: '/dev/sse',
+  path: '/dev/sse',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectIdReviewRoute = ProjectIdReviewRouteImport.update({
@@ -38,12 +44,14 @@ const ProjectIdDiagramRoute = ProjectIdDiagramRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
+  '/dev/sse': typeof DevSseRoute
   '/project/$id/diagram': typeof ProjectIdDiagramRoute
   '/project/$id/review': typeof ProjectIdReviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
+  '/dev/sse': typeof DevSseRoute
   '/project/$id/diagram': typeof ProjectIdDiagramRoute
   '/project/$id/review': typeof ProjectIdReviewRoute
 }
@@ -51,18 +59,30 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
+  '/dev/sse': typeof DevSseRoute
   '/project/$id/diagram': typeof ProjectIdDiagramRoute
   '/project/$id/review': typeof ProjectIdReviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/history' | '/project/$id/diagram' | '/project/$id/review'
+  fullPaths:
+    | '/'
+    | '/history'
+    | '/dev/sse'
+    | '/project/$id/diagram'
+    | '/project/$id/review'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/history' | '/project/$id/diagram' | '/project/$id/review'
+  to:
+    | '/'
+    | '/history'
+    | '/dev/sse'
+    | '/project/$id/diagram'
+    | '/project/$id/review'
   id:
     | '__root__'
     | '/'
     | '/history'
+    | '/dev/sse'
     | '/project/$id/diagram'
     | '/project/$id/review'
   fileRoutesById: FileRoutesById
@@ -70,6 +90,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HistoryRoute: typeof HistoryRoute
+  DevSseRoute: typeof DevSseRoute
   ProjectIdDiagramRoute: typeof ProjectIdDiagramRoute
   ProjectIdReviewRoute: typeof ProjectIdReviewRoute
 }
@@ -88,6 +109,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/sse': {
+      id: '/dev/sse'
+      path: '/dev/sse'
+      fullPath: '/dev/sse'
+      preLoaderRoute: typeof DevSseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/project/$id/review': {
@@ -110,6 +138,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HistoryRoute: HistoryRoute,
+  DevSseRoute: DevSseRoute,
   ProjectIdDiagramRoute: ProjectIdDiagramRoute,
   ProjectIdReviewRoute: ProjectIdReviewRoute,
 }
