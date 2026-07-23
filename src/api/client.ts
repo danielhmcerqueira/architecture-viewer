@@ -7,10 +7,8 @@
 // usando fetch contra `${API_BASE_URL}${path}`.
 
 import { API_BASE_URL } from "@/config";
-import {
-  sampleArchitecture,
-  sampleProjects,
-} from "@/mocks/architecture.sample";
+import { sampleArchitecture } from "@/mocks/architecture.sample";
+import { sampleProjectHistory } from "@/mocks/projects.sample";
 import type {
   ArchitectureSpec,
   ProjectSummary,
@@ -72,7 +70,7 @@ export async function getArchitecture(
 }
 
 export async function listProjects(): Promise<ProjectSummary[]> {
-  if (USE_MOCKS) return delay(clone(sampleProjects));
+  if (USE_MOCKS) return delay(clone(sampleProjectHistory));
   // TODO(real):
   // return apiFetch<ProjectSummary[]>("/projects");
   throw new Error("Backend real ainda não conectado.");

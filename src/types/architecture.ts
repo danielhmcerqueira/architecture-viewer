@@ -91,6 +91,11 @@ export interface ProjectSummary {
   version: number;
   status: ProjectStatus;
   updated_at: string;
+  // Últimos metadados de diagrama, quando existir. Ausentes se o projeto
+  // ainda não gerou nenhum arquivo.
+  last_diagram_version?: number;
+  last_diagram_generated_at?: string;
+  last_diagram_file_name?: string;
 }
 
 export type SseEventName =
