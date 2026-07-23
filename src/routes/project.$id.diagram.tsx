@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AlertCircle, Download, ExternalLink, FileWarning, Loader2, RefreshCw } from "lucide-react";
+import {
+  AlertCircle,
+  Download,
+  ExternalLink,
+  FileWarning,
+  Loader2,
+  RefreshCw,
+} from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -8,12 +15,25 @@ import { type DiagramInfo } from "@/api/client";
 import { projects } from "@/api/projects";
 import { useProgressEvents } from "@/hooks/useProgressEvents";
 import type { ArchitectureSpec } from "@/types/architecture";
+import {
+  PageHero,
+  PaperCard,
+  SectionLabel,
+  StatusStrip,
+  iebtPrimaryButtonClass,
+  iebtPrimaryButtonStyle,
+  iebtOutlineButtonClass,
+  iebtOutlineButtonStyle,
+} from "@/components/iebt";
 
 export const Route = createFileRoute("/project/$id/diagram")({
   head: () => ({
     meta: [
-      { title: "Diagrama — Arquiteto" },
-      { name: "description", content: "Geração e download do diagrama draw.io." },
+      { title: "Diagrama — Arquiteto · iebt" },
+      {
+        name: "description",
+        content: "Geração e download do diagrama draw.io.",
+      },
     ],
   }),
   component: DiagramPage,
@@ -52,8 +72,6 @@ function DiagramPage() {
     };
   }, [id]);
 
-  // Assina o canal de progresso do diagrama apenas quando a geração está
-  // em andamento. RECEBE e REPASSA — nada mais.
   const { events, lastEvent, status } = useProgressEvents(id, {
     channel: "diagram",
     enabled: phase === "generating",
@@ -87,94 +105,225 @@ function DiagramPage() {
     }
   }, [id]);
 
+  // ----- Loading / erro de carregamento -----
   if (loading) {
     return (
-      <div className="mx-auto max-w-3xl">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" /> Carregando projeto…
-        </div>
+      <div>
+        <PageHero
+          index="/03"
+          title="Diagrama"
+          description="Carregando dados do projeto…"
+        />
+        <PageBody>
+          <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.24em] opacity-70">
+            <Loader2 className="h-4 w-4 animate-spin" /> carregando…
+          </div>
+        </PageBody>
       </div>
     );
   }
 
   if (loadError || !spec) {
     return (
-      <div className="mx-auto max-w-3xl">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Não foi possível carregar o projeto</AlertTitle>
-          <AlertDescription>{loadError ?? "Projeto não encontrado."}</AlertDescription>
-        </Alert>
+      <div>
+        <PageHero index="/03" title="Diagrama" />
+        <PageBody>
+          <BrutAlert
+            tone="error"
+            icon={<AlertCircle className="h-4 w-4" />}
+            title="Não foi possível carregar o projeto"
+            description={loadError ?? "Projeto não encontrado."}
+          />
+        </PageBody>
       </div>
     );
   }
 
-  // Bloqueio de acesso quando a arquitetura ainda não foi aprovada.
+  // ----- Bloqueio: não aprovado -----
   if (spec.project.status !== "APPROVED") {
     return (
-      <div className="mx-auto max-w-3xl space-y-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Diagrama</h1>
-        <Alert>
-          <FileWarning className="h-4 w-4" />
-          <AlertTitle>Arquitetura ainda não aprovada</AlertTitle>
-          <AlertDescription>
-            O diagrama só pode ser gerado depois que a arquitetura for
-            aprovada na tela de revisão.
-          </AlertDescription>
-        </Alert>
-        <Button asChild variant="outline">
-          <Link to="/project/$id/review" params={{ id }}>
-            Voltar para a revisão
-          </Link>
-        </Button>
+      <div>
+        <PageHero
+          index="/03"
+          title={
+            <>
+              Aguardando{" "}
+              <span className="inline-flex items-baseline gap-2">
+                aprovação
+                <span
+                  aria-hidden
+                  className="inline-block h-5 w-5 translate-y-0.5 sm:h-6 sm:w-6"
+                  style={{ background: "var(--iebt-ink)" }}
+                />
+              </span>
+            </>
+          }
+          description="O diagrama só é gerado depois que a arquitetura for aprovada na tela de revisão."
+        />
+        <StatusStrip left={<>diagrama · bloqueado</>} right="status ≠ approved" />
+        <PageBody>
+          <BrutAlert
+            tone="warning"
+            icon={<FileWarning className="h-4 w-4" />}
+            title="Arquitetura ainda não aprovada"
+            description="Volte para a revisão, resolva as pendências e aprove antes de gerar o diagrama."
+          />
+          <Button
+            asChild
+            className={`${iebtOutlineButtonClass} mt-4`}
+            style={iebtOutlineButtonStyle}
+          >
+            <Link to="/project/$id/review" params={{ id }}>
+              Voltar para a revisão
+            </Link>
+          </Button>
+        </PageBody>
       </div>
     );
   }
 
+  // ----- Tela principal -----
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Diagrama</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {spec.project.name} — versão aprovada {spec.project.version}. A
-          geração do arquivo é feita pelo backend; esta tela só dispara a
-          requisição, acompanha o progresso e entrega o download.
-        </p>
-      </header>
+    <div>
+      <PageHero
+        index="/03"
+        title={
+          <>
+            {spec.project.name} —{" "}
+            <span className="inline-flex items-baseline gap-2">
+              diagrama
+              <span
+                aria-hidden
+                className="inline-block h-5 w-5 translate-y-0.5 sm:h-6 sm:w-6"
+                style={{ background: "var(--iebt-ink)" }}
+              />
+            </span>
+          </>
+        }
+        description={`Versão aprovada ${spec.project.version}. Esta tela dispara a geração no backend, acompanha o progresso e entrega o download.`}
+      />
+      <StatusStrip
+        left={<>diagrama · geração</>}
+        right={
+          phase === "idle"
+            ? "pronto"
+            : phase === "generating"
+              ? "em andamento"
+              : phase === "done"
+                ? "concluído"
+                : "falhou"
+        }
+      />
 
-      {phase === "idle" && (
-        <div className="rounded-lg border border-border bg-card p-6">
-          <Button onClick={handleGenerate}>Gerar arquivo</Button>
+      <PageBody>
+        {phase === "idle" && (
+          <PaperCard className="p-6">
+            <SectionLabel index="01" title="Iniciar geração" />
+            <p className="mt-3 max-w-xl text-sm opacity-70">
+              A arquitetura aprovada é enviada ao backend, que devolve um
+              arquivo <span className="font-mono">.drawio</span>. Nada é
+              validado automaticamente por esta interface.
+            </p>
+            <div className="mt-5">
+              <Button
+                onClick={handleGenerate}
+                className={iebtPrimaryButtonClass}
+                style={iebtPrimaryButtonStyle}
+              >
+                Gerar arquivo
+              </Button>
+            </div>
+          </PaperCard>
+        )}
+
+        {phase === "generating" && (
+          <GenerationProgress
+            statusLabel={status}
+            lastName={lastEvent?.name ?? null}
+          />
+        )}
+
+        {phase === "failed" && (
+          <div className="space-y-4">
+            <BrutAlert
+              tone="error"
+              icon={<AlertCircle className="h-4 w-4" />}
+              title="Falha na geração"
+              description={
+                genError ?? "O backend não concluiu a geração do diagrama."
+              }
+            />
+            <Button
+              onClick={handleGenerate}
+              className={iebtPrimaryButtonClass}
+              style={iebtPrimaryButtonStyle}
+            >
+              Tentar novamente
+            </Button>
+          </div>
+        )}
+
+        {phase === "done" && info && (
+          <ResultCard
+            projectId={id}
+            info={info}
+            onRegenerate={handleGenerate}
+          />
+        )}
+      </PageBody>
+    </div>
+  );
+}
+
+function PageBody({ children }: { children: React.ReactNode }) {
+  return (
+    <section
+      className="px-6 pb-24 pt-10"
+      style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
+    >
+      <div className="mx-auto max-w-3xl space-y-6">{children}</div>
+    </section>
+  );
+}
+
+function BrutAlert({
+  tone,
+  icon,
+  title,
+  description,
+}: {
+  tone: "error" | "warning" | "info";
+  icon: React.ReactNode;
+  title: string;
+  description: React.ReactNode;
+}) {
+  const bg =
+    tone === "error"
+      ? "rgba(214,59,14,0.08)"
+      : tone === "warning"
+        ? "rgba(255,79,28,0.10)"
+        : "#fff";
+  return (
+    <div
+      className="relative border-2 p-4"
+      style={{ borderColor: "var(--iebt-ink)", background: bg }}
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -left-[6px] -top-[6px] h-3 w-3"
+        style={{ background: "var(--iebt-orange)" }}
+      />
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5" style={{ color: "var(--iebt-orange-deep)" }}>
+          {icon}
+        </span>
+        <div>
+          <div className="font-mono text-[13px] uppercase tracking-[0.18em]">
+            {title}
+          </div>
+          <div className="mt-1 text-sm opacity-80">{description}</div>
         </div>
-      )}
-
-      {phase === "generating" && (
-        <GenerationProgress
-          statusLabel={status}
-          lastName={lastEvent?.name ?? null}
-        />
-      )}
-
-      {phase === "failed" && (
-        <div className="space-y-3">
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Falha na geração</AlertTitle>
-            <AlertDescription>
-              {genError ?? "O backend não concluiu a geração do diagrama."}
-            </AlertDescription>
-          </Alert>
-          <Button onClick={handleGenerate}>Tentar novamente</Button>
-        </div>
-      )}
-
-      {phase === "done" && info && (
-        <ResultCard
-          projectId={id}
-          info={info}
-          onRegenerate={handleGenerate}
-        />
-      )}
+      </div>
     </div>
   );
 }
@@ -187,27 +336,32 @@ function GenerationProgress({
   lastName: string | null;
 }) {
   const label = useMemo(() => {
-    if (lastName === "DIAGRAM_GENERATION_STARTED") return "O backend começou a montar o diagrama.";
-    if (lastName === "COMPLETED") return "O backend finalizou. Preparando download…";
+    if (lastName === "DIAGRAM_GENERATION_STARTED")
+      return "O backend começou a montar o diagrama.";
+    if (lastName === "COMPLETED")
+      return "O backend finalizou. Preparando download…";
     return "Conectando ao canal de progresso…";
   }, [lastName]);
 
   return (
-    <div className="rounded-lg border border-border bg-card p-6">
-      <div className="flex items-center gap-2 text-sm">
-        <Loader2 className="h-4 w-4 animate-spin" />
+    <PaperCard className="p-6">
+      <SectionLabel index="01" title="Progresso" />
+      <div className="mt-4 flex items-center gap-2 text-sm">
+        <Loader2
+          className="h-4 w-4 animate-spin"
+          style={{ color: "var(--iebt-orange-deep)" }}
+        />
         <span>{label}</span>
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">
-        Canal: <span className="font-mono">{statusLabel}</span>
+      <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] opacity-60">
+        canal: <span>{statusLabel}</span>
         {lastName ? (
           <>
-            {" · "}
-            último evento: <span className="font-mono">{lastName}</span>
+            {" · "}último evento: <span>{lastName}</span>
           </>
         ) : null}
       </p>
-    </div>
+    </PaperCard>
   );
 }
 
@@ -227,54 +381,86 @@ function ResultCard({
   const generatedAt = new Date(info.generated_at).toLocaleString("pt-BR");
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-lg border border-border bg-card p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="space-y-6">
+      <PaperCard className="p-6">
+        <SectionLabel
+          index="01"
+          title="Arquivo gerado"
+          meta={
+            <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-60">
+              v{info.version}
+            </span>
+          }
+        />
+        <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-1">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">
-              Arquivo gerado
-            </p>
             <p className="font-mono text-sm">{info.file_name}</p>
-            <p className="text-xs text-muted-foreground">
-              Versão {info.version} · gerado em {generatedAt}
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-60">
+              gerado em {generatedAt}
             </p>
           </div>
-          <Button onClick={handleDownload}>
-            <Download className="mr-2 h-4 w-4" />
+          <Button
+            onClick={handleDownload}
+            className={iebtPrimaryButtonClass}
+            style={iebtPrimaryButtonStyle}
+          >
+            <Download className="h-4 w-4" />
             Baixar .drawio
           </Button>
         </div>
 
-        <Alert className="mt-6">
-          <FileWarning className="h-4 w-4" />
-          <AlertTitle>Confira o arquivo antes de usar</AlertTitle>
-          <AlertDescription className="space-y-2">
-            <p>
-              Esta versão não valida o arquivo automaticamente. Abra o
-              arquivo no draw.io e confira se os componentes e as relações
-              correspondem à arquitetura que você aprovou.
-            </p>
-            <a
-              href="https://app.diagrams.net"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 text-sm underline underline-offset-4"
-            >
-              Abrir draw.io <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          </AlertDescription>
-        </Alert>
-      </div>
+        <div
+          className="mt-6 border-2 p-4"
+          style={{
+            borderColor: "var(--iebt-ink)",
+            background: "rgba(255,79,28,0.08)",
+          }}
+        >
+          <div className="flex items-start gap-3">
+            <FileWarning
+              className="mt-0.5 h-4 w-4"
+              style={{ color: "var(--iebt-orange-deep)" }}
+            />
+            <div>
+              <div className="font-mono text-[13px] uppercase tracking-[0.18em]">
+                Confira o arquivo antes de usar
+              </div>
+              <p className="mt-2 text-sm opacity-80">
+                Esta versão não valida o arquivo automaticamente. Abra o
+                arquivo no draw.io e confira se os componentes e as relações
+                correspondem à arquitetura que você aprovou.
+              </p>
+              <a
+                href="https://app.diagrams.net"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.2em] underline underline-offset-4"
+                style={{ color: "var(--iebt-orange-deep)" }}
+              >
+                Abrir draw.io <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </PaperCard>
 
-      <div className="rounded-lg border border-dashed border-border p-4">
+      <div
+        className="border-2 border-dashed p-5"
+        style={{ borderColor: "var(--iebt-ink)" }}
+      >
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-muted-foreground">
+          <p className="max-w-md text-sm opacity-70">
             Gerar novamente refaz apenas o desenho. A arquitetura aprovada
             fica preservada — nenhum componente, relação ou evidência é
             alterado.
           </p>
-          <Button variant="outline" onClick={onRegenerate}>
-            <RefreshCw className="mr-2 h-4 w-4" />
+          <Button
+            variant="outline"
+            onClick={onRegenerate}
+            className={iebtOutlineButtonClass}
+            style={iebtOutlineButtonStyle}
+          >
+            <RefreshCw className="h-4 w-4" />
             Gerar novamente
           </Button>
         </div>
