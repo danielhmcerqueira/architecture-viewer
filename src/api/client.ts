@@ -115,6 +115,35 @@ export async function approveArchitecture(
   throw new Error("Backend real ainda não conectado.");
 }
 
+// ---- Diagrama ----------------------------------------------------------
+
+export interface DiagramInfo {
+  file_name: string;
+  version: number;
+  generated_at: string; // ISO
+}
+
+export async function generateDiagram(projectId: string): Promise<DiagramInfo> {
+  if (USE_MOCKS) {
+    return delay({
+      file_name: `${projectId}-arquitetura.drawio`,
+      version: 1,
+      generated_at: new Date().toISOString(),
+    });
+  }
+  // TODO(real):
+  // return apiFetch<DiagramInfo>(`/api/projects/${projectId}/diagram`, {
+  //   method: "POST",
+  // });
+  throw new Error("Backend real ainda não conectado.");
+}
+
+// URL usada pelo <a download> no modo real. No mock, o download é montado
+// em memória a partir de `SAMPLE_DIAGRAM_XML` no próprio componente.
+export function diagramDownloadUrl(projectId: string): string {
+  return `${API_BASE_URL}/api/projects/${encodeURIComponent(projectId)}/diagram/download`;
+}
+
 
 // ---- Utilitário reservado para o modo real ------------------------------
 
