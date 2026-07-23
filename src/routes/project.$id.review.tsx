@@ -329,15 +329,36 @@ function ProjectHeader() {
   const { draft, dispatch } = useArchitectureDraft();
   const p = draft.project;
   return (
-    <header className="space-y-3 rounded-lg border border-border bg-card p-4">
-      <div className="flex items-start justify-between gap-4">
+    <PaperCard as="section" className="p-5">
+      <SectionLabel
+        index="01"
+        title="Identificação"
+        meta={
+          <span
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em]"
+            style={{ color: "var(--iebt-orange-deep)" }}
+          >
+            <span
+              className="inline-block h-2 w-2"
+              style={{ background: "var(--iebt-orange)" }}
+              aria-hidden
+            />
+            v{p.version} · {p.status.toLowerCase()}
+          </span>
+        }
+      />
+      <div className="mt-4 flex items-start justify-between gap-4">
         <div className="flex-1 space-y-2">
           <Input
             value={p.name}
             onChange={(e) =>
-              dispatch({ type: "patchProject", patch: { name: e.target.value } })
+              dispatch({
+                type: "patchProject",
+                patch: { name: e.target.value },
+              })
             }
-            className="h-auto border-0 bg-transparent px-0 text-2xl font-semibold tracking-tight shadow-none focus-visible:ring-0"
+            className="h-auto rounded-none border-0 border-b-2 bg-transparent px-0 font-mono text-2xl tracking-tight shadow-none focus-visible:ring-0"
+            style={{ borderBottomColor: "var(--iebt-ink)" }}
           />
           <Textarea
             value={p.description}
@@ -348,21 +369,11 @@ function ProjectHeader() {
               })
             }
             rows={2}
-            className="resize-none border-0 bg-transparent px-0 text-sm text-muted-foreground shadow-none focus-visible:ring-0"
+            className="resize-none rounded-none border-0 bg-transparent px-0 text-sm opacity-80 shadow-none focus-visible:ring-0"
           />
         </div>
-        <div className="flex flex-col items-end gap-1 text-right text-xs">
-          <div className="text-muted-foreground">Versão</div>
-          <div className="font-mono text-base">v{p.version}</div>
-          <div className="text-muted-foreground">
-            editar gera nova revisão
-          </div>
-          <Badge variant="outline" className="mt-1">
-            {p.status}
-          </Badge>
-        </div>
       </div>
-    </header>
+    </PaperCard>
   );
 }
 
