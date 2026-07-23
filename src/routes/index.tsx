@@ -58,8 +58,9 @@ function NewProjectPage() {
   }
 
   return (
-    <div className="-mx-6 -my-8">
+    <div>
       {/* Hero — bloco da marca iebt */}
+
       <section
         className="relative overflow-hidden px-6 pb-8 pt-8 sm:pb-10 sm:pt-10"
         style={{

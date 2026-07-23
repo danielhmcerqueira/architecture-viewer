@@ -28,6 +28,16 @@ import {
   useArchitectureDraft,
 } from "@/features/review/ArchitectureDraftContext";
 import { VerificationBadge } from "@/components/VerificationBadge";
+import {
+  PageHero,
+  PaperCard,
+  SectionLabel,
+  StatusStrip,
+  iebtOutlineButtonClass,
+  iebtOutlineButtonStyle,
+  iebtPrimaryButtonClass,
+  iebtPrimaryButtonStyle,
+} from "@/components/iebt";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,17 +95,39 @@ function ReviewRoute() {
 
   if (q.isLoading || !q.data) {
     return (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin" /> Carregando arquitetura…
+      <div>
+        <PageHero index="/02" title="Revisão" description="Carregando arquitetura…" />
+        <section
+          className="px-6 pb-24 pt-10"
+          style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
+        >
+          <div className="mx-auto flex max-w-5xl items-center gap-2 font-mono text-xs uppercase tracking-[0.24em] opacity-70">
+            <Loader2 className="h-4 w-4 animate-spin" /> carregando…
+          </div>
+        </section>
       </div>
     );
   }
   if (q.error) {
     return (
-      <Alert variant="destructive">
-        <AlertTitle>Não foi possível carregar</AlertTitle>
-        <AlertDescription>{String(q.error)}</AlertDescription>
-      </Alert>
+      <div>
+        <PageHero index="/02" title="Revisão" />
+        <section
+          className="px-6 pb-24 pt-10"
+          style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
+        >
+          <div className="mx-auto max-w-5xl">
+            <Alert
+              variant="destructive"
+              className="rounded-none border-2"
+              style={{ borderColor: "var(--iebt-ink)" }}
+            >
+              <AlertTitle>Não foi possível carregar</AlertTitle>
+              <AlertDescription>{String(q.error)}</AlertDescription>
+            </Alert>
+          </div>
+        </section>
+      </div>
     );
   }
   return (
@@ -138,63 +170,116 @@ function ReviewScreen({
   }
 
   return (
-    <div className="pb-24">
-      <ProjectHeader />
+    <div>
+      <PageHero
+        index="/02"
+        title={
+          <>
+            {draft.project.name} —{" "}
+            <span className="inline-flex items-baseline gap-2">
+              revisão
+              <span
+                aria-hidden
+                className="inline-block h-5 w-5 translate-y-0.5 sm:h-6 sm:w-6"
+                style={{ background: "var(--iebt-ink)" }}
+              />
+            </span>
+          </>
+        }
+        description="Ajuste componentes, relações e evidências. Cada salvar gera uma nova versão no backend."
+      />
+      <StatusStrip
+        left={<>arquitetura · v{draft.project.version}</>}
+        right={
+          isDirty
+            ? "alterações não salvas"
+            : draft.project.status === "APPROVED"
+              ? "aprovada"
+              : "sem pendências"
+        }
+      />
 
-      <Tabs value={tab} onValueChange={setTab} className="mt-6">
-        <TabsList className="flex flex-wrap gap-1">
-          <TabsTrigger value="overview">Visão geral</TabsTrigger>
-          <TabsTrigger value="components">
-            Componentes
-            <Badge variant="secondary" className="ml-2">
-              {draft.components.length}
-            </Badge>
-          </TabsTrigger>
-          <TabsTrigger value="relations">
-            Relações
-            <Badge variant="secondary" className="ml-2">
-              {draft.relations.length}
-            </Badge>
-          </TabsTrigger>
-          <TabsTrigger value="environments">Ambientes</TabsTrigger>
-          <TabsTrigger value="assumptions">Premissas</TabsTrigger>
-          <TabsTrigger value="gaps">
-            Lacunas
-            {openGaps.length > 0 && (
-              <Badge className="ml-2 bg-amber-500 text-white hover:bg-amber-500">
-                {openGaps.length}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="evidence">Evidências</TabsTrigger>
-        </TabsList>
+      <section
+        className="px-6 pb-28 pt-8"
+        style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
+      >
+        <div className="mx-auto max-w-5xl space-y-6">
+          <ProjectHeader />
 
-        <TabsContent value="overview" className="mt-4">
-          <OverviewPanel
-            spec={draft}
-            openGapsCount={openGaps.length}
-            onGoToGaps={() => setTab("gaps")}
-          />
-        </TabsContent>
-        <TabsContent value="components" className="mt-4">
-          <ComponentsTable />
-        </TabsContent>
-        <TabsContent value="relations" className="mt-4">
-          <RelationsTable />
-        </TabsContent>
-        <TabsContent value="environments" className="mt-4">
-          <EnvironmentsPanel />
-        </TabsContent>
-        <TabsContent value="assumptions" className="mt-4">
-          <AssumptionsList />
-        </TabsContent>
-        <TabsContent value="gaps" className="mt-4">
-          <GapsPanel />
-        </TabsContent>
-        <TabsContent value="evidence" className="mt-4">
-          <EvidenceList evidence={draft.evidence} components={draft.components} />
-        </TabsContent>
-      </Tabs>
+          <Tabs value={tab} onValueChange={setTab}>
+            <TabsList
+              className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-none border-2 bg-white p-1"
+              style={{ borderColor: "var(--iebt-ink)" }}
+            >
+              <IebtTabTrigger value="overview">Visão geral</IebtTabTrigger>
+              <IebtTabTrigger value="components">
+                Componentes
+                <Badge
+                  variant="secondary"
+                  className="ml-2 rounded-none font-mono"
+                >
+                  {draft.components.length}
+                </Badge>
+              </IebtTabTrigger>
+              <IebtTabTrigger value="relations">
+                Relações
+                <Badge
+                  variant="secondary"
+                  className="ml-2 rounded-none font-mono"
+                >
+                  {draft.relations.length}
+                </Badge>
+              </IebtTabTrigger>
+              <IebtTabTrigger value="environments">Ambientes</IebtTabTrigger>
+              <IebtTabTrigger value="assumptions">Premissas</IebtTabTrigger>
+              <IebtTabTrigger value="gaps">
+                Lacunas
+                {openGaps.length > 0 && (
+                  <span
+                    className="ml-2 inline-flex items-center px-1.5 py-0.5 font-mono text-[10px] tracking-wider"
+                    style={{
+                      background: "var(--iebt-orange)",
+                      color: "var(--iebt-paper)",
+                    }}
+                  >
+                    {openGaps.length}
+                  </span>
+                )}
+              </IebtTabTrigger>
+              <IebtTabTrigger value="evidence">Evidências</IebtTabTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="mt-4">
+              <OverviewPanel
+                spec={draft}
+                openGapsCount={openGaps.length}
+                onGoToGaps={() => setTab("gaps")}
+              />
+            </TabsContent>
+            <TabsContent value="components" className="mt-4">
+              <ComponentsTable />
+            </TabsContent>
+            <TabsContent value="relations" className="mt-4">
+              <RelationsTable />
+            </TabsContent>
+            <TabsContent value="environments" className="mt-4">
+              <EnvironmentsPanel />
+            </TabsContent>
+            <TabsContent value="assumptions" className="mt-4">
+              <AssumptionsList />
+            </TabsContent>
+            <TabsContent value="gaps" className="mt-4">
+              <GapsPanel />
+            </TabsContent>
+            <TabsContent value="evidence" className="mt-4">
+              <EvidenceList
+                evidence={draft.evidence}
+                components={draft.components}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </section>
 
       <SaveRevisionBar
         isDirty={isDirty}
@@ -221,21 +306,59 @@ function ReviewScreen({
   );
 }
 
+function IebtTabTrigger({
+  value,
+  children,
+}: {
+  value: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <TabsTrigger
+      value={value}
+      className="rounded-none border-0 bg-transparent px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] data-[state=active]:bg-[var(--iebt-ink)] data-[state=active]:text-[var(--iebt-paper)] data-[state=active]:shadow-none"
+    >
+      {children}
+    </TabsTrigger>
+  );
+}
+
 // -------------------- Header --------------------
 
 function ProjectHeader() {
   const { draft, dispatch } = useArchitectureDraft();
   const p = draft.project;
   return (
-    <header className="space-y-3 rounded-lg border border-border bg-card p-4">
-      <div className="flex items-start justify-between gap-4">
+    <PaperCard as="section" className="p-5">
+      <SectionLabel
+        index="01"
+        title="Identificação"
+        meta={
+          <span
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em]"
+            style={{ color: "var(--iebt-orange-deep)" }}
+          >
+            <span
+              className="inline-block h-2 w-2"
+              style={{ background: "var(--iebt-orange)" }}
+              aria-hidden
+            />
+            v{p.version} · {p.status.toLowerCase()}
+          </span>
+        }
+      />
+      <div className="mt-4 flex items-start justify-between gap-4">
         <div className="flex-1 space-y-2">
           <Input
             value={p.name}
             onChange={(e) =>
-              dispatch({ type: "patchProject", patch: { name: e.target.value } })
+              dispatch({
+                type: "patchProject",
+                patch: { name: e.target.value },
+              })
             }
-            className="h-auto border-0 bg-transparent px-0 text-2xl font-semibold tracking-tight shadow-none focus-visible:ring-0"
+            className="h-auto rounded-none border-0 border-b-2 bg-transparent px-0 font-mono text-2xl tracking-tight shadow-none focus-visible:ring-0"
+            style={{ borderBottomColor: "var(--iebt-ink)" }}
           />
           <Textarea
             value={p.description}
@@ -246,21 +369,11 @@ function ProjectHeader() {
               })
             }
             rows={2}
-            className="resize-none border-0 bg-transparent px-0 text-sm text-muted-foreground shadow-none focus-visible:ring-0"
+            className="resize-none rounded-none border-0 bg-transparent px-0 text-sm opacity-80 shadow-none focus-visible:ring-0"
           />
         </div>
-        <div className="flex flex-col items-end gap-1 text-right text-xs">
-          <div className="text-muted-foreground">Versão</div>
-          <div className="font-mono text-base">v{p.version}</div>
-          <div className="text-muted-foreground">
-            editar gera nova revisão
-          </div>
-          <Badge variant="outline" className="mt-1">
-            {p.status}
-          </Badge>
-        </div>
       </div>
-    </header>
+    </PaperCard>
   );
 }
 
@@ -1018,33 +1131,61 @@ function SaveRevisionBar({
   onApprove: () => void;
 }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur">
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 border-t-2"
+      style={{
+        background: "var(--iebt-ink)",
+        borderColor: "var(--iebt-orange)",
+        color: "var(--iebt-paper)",
+      }}
+    >
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-6 py-3">
-        <div className="text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] opacity-80">
+          <span
+            className="inline-block h-2 w-2"
+            style={{
+              background: isDirty
+                ? "var(--iebt-orange)"
+                : approved
+                  ? "#7fe0a3"
+                  : "rgba(250,247,242,0.4)",
+            }}
+            aria-hidden
+          />
           {isDirty
-            ? "Você tem alterações não salvas."
+            ? "Alterações não salvas"
             : approved
-              ? "Arquitetura aprovada."
-              : "Nenhuma alteração pendente."}
+              ? "Arquitetura aprovada"
+              : "Sem pendências"}
         </div>
         <div className="flex items-center gap-2">
           <Button
-            variant="outline"
             onClick={onSave}
             disabled={!isDirty || saving}
+            className={iebtOutlineButtonClass}
+            style={iebtOutlineButtonStyle}
           >
-            {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
+            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
             Salvar revisão
           </Button>
           {approved ? (
-            <Button asChild>
+            <Button
+              asChild
+              className={iebtPrimaryButtonClass}
+              style={iebtPrimaryButtonStyle}
+            >
               <Link to="/project/$id/diagram" params={{ id: projectId }}>
-                Ir para diagrama <ArrowRight className="ml-1 h-4 w-4" />
+                Ir para diagrama <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           ) : (
-            <Button onClick={onApprove} disabled={!canApprove}>
-              <CheckCircle2 className="mr-1 h-4 w-4" /> Aprovar arquitetura
+            <Button
+              onClick={onApprove}
+              disabled={!canApprove}
+              className={iebtPrimaryButtonClass}
+              style={iebtPrimaryButtonStyle}
+            >
+              <CheckCircle2 className="h-4 w-4" /> Aprovar arquitetura
             </Button>
           )}
         </div>
