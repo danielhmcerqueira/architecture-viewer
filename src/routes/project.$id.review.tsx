@@ -95,17 +95,39 @@ function ReviewRoute() {
 
   if (q.isLoading || !q.data) {
     return (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin" /> Carregando arquitetura…
+      <div>
+        <PageHero index="/02" title="Revisão" description="Carregando arquitetura…" />
+        <section
+          className="px-6 pb-24 pt-10"
+          style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
+        >
+          <div className="mx-auto flex max-w-5xl items-center gap-2 font-mono text-xs uppercase tracking-[0.24em] opacity-70">
+            <Loader2 className="h-4 w-4 animate-spin" /> carregando…
+          </div>
+        </section>
       </div>
     );
   }
   if (q.error) {
     return (
-      <Alert variant="destructive">
-        <AlertTitle>Não foi possível carregar</AlertTitle>
-        <AlertDescription>{String(q.error)}</AlertDescription>
-      </Alert>
+      <div>
+        <PageHero index="/02" title="Revisão" />
+        <section
+          className="px-6 pb-24 pt-10"
+          style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
+        >
+          <div className="mx-auto max-w-5xl">
+            <Alert
+              variant="destructive"
+              className="rounded-none border-2"
+              style={{ borderColor: "var(--iebt-ink)" }}
+            >
+              <AlertTitle>Não foi possível carregar</AlertTitle>
+              <AlertDescription>{String(q.error)}</AlertDescription>
+            </Alert>
+          </div>
+        </section>
+      </div>
     );
   }
   return (
