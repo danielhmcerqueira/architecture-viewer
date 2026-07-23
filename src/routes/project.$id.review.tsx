@@ -80,7 +80,7 @@ function ReviewRoute() {
   const { id } = Route.useParams();
   const q = useQuery({
     queryKey: ["architecture", id],
-    queryFn: () => getArchitecture(id),
+    queryFn: () => projects.getArchitecture(id),
   });
 
   if (q.isLoading || !q.data) {
@@ -125,7 +125,7 @@ function ReviewScreen({
   async function handleSave() {
     setSaving(true);
     try {
-      const next = await patchArchitecture(projectId, draft);
+      const next = await projects.patchArchitecture(projectId, draft);
       dispatch({ type: "reset", spec: next });
       toast.success(`Revisão salva (versão ${next.project.version}).`);
       refetch();
@@ -1076,7 +1076,7 @@ function ApproveDialog({
   async function confirm() {
     setBusy(true);
     try {
-      const spec = await approveArchitecture(projectId, APPROVER_NAME);
+      const spec = await projects.approve(projectId, { approver: APPROVER_NAME });
       onApproved(spec);
       toast.success("Arquitetura aprovada.");
       onOpenChange(false);
