@@ -6,11 +6,14 @@
 import {
   approveArchitecture,
   createProject,
+  diagramDownloadUrl,
+  generateDiagram,
   getArchitecture,
   listProjects,
   patchArchitecture,
   type CreateProjectInput,
   type CreateProjectResponse,
+  type DiagramInfo,
 } from "@/api/client";
 import type { ArchitectureSpec, ProjectSummary } from "@/types/architecture";
 
@@ -25,4 +28,6 @@ export const projects = {
     id: string,
     { approver }: { approver: string },
   ): Promise<ArchitectureSpec> => approveArchitecture(id, approver),
+  generateDiagram: (id: string): Promise<DiagramInfo> => generateDiagram(id),
+  diagramDownloadUrl: (id: string): string => diagramDownloadUrl(id),
 };

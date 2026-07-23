@@ -14,7 +14,10 @@ export interface UseProgressEventsResult {
 
 export function useProgressEvents(
   projectId: string | undefined,
+  opts?: { channel?: "structuring" | "diagram"; enabled?: boolean },
 ): UseProgressEventsResult {
+  const channel = opts?.channel ?? "structuring";
+  const enabled = opts?.enabled ?? true;
   const [events, setEvents] = useState<ProgressEvent[]>([]);
   const [status, setStatus] = useState<SubscribeStatus>("connecting");
   const mounted = useRef(true);
@@ -27,25 +30,29 @@ export function useProgressEvents(
   }, []);
 
   useEffect(() => {
-    if (!projectId) return;
+    if (!projectId || !enabled) return;
     setEvents([]);
     setStatus("connecting");
 
-    const unsubscribe = subscribeProgress(projectId, {
-      onEvent: (ev) => {
-        if (!mounted.current) return;
-        setEvents((prev) => [...prev, ev]);
+    const unsubscribe = subscribeProgress(
+      projectId,
+      {
+        onEvent: (ev) => {
+          if (!mounted.current) return;
+          setEvents((prev) => [...prev, ev]);
+        },
+        onStatus: (s) => {
+          if (!mounted.current) return;
+          setStatus(s);
+        },
       },
-      onStatus: (s) => {
-        if (!mounted.current) return;
-        setStatus(s);
-      },
-    });
+      { channel },
+    );
 
     return () => {
       unsubscribe();
     };
-  }, [projectId]);
+  }, [projectId, channel, enabled]);
 
   return {
     events,
