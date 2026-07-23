@@ -346,26 +346,29 @@ function StatCard({ label, value }: { label: string; value: number }) {
 
 // -------------------- Components --------------------
 
-const STATUS_FILTERS: { key: "all" | VerificationStatus; label: string }[] = [
+// Filtros nunca ocultam not_found nem unavailable — a política do produto
+// exige que itens não verificados sigam sempre visíveis.
+const STATUS_FILTERS: { key: "all" | "issues"; label: string }[] = [
   { key: "all", label: "Todos" },
-  { key: "verified", label: "Verificados" },
-  { key: "not_found", label: "Não encontrados" },
-  { key: "unavailable", label: "Indisponíveis" },
+  { key: "issues", label: "Somente não verificados" },
 ];
 
 function ComponentsTable() {
   const { draft, dispatch } = useArchitectureDraft();
-  const [filter, setFilter] = useState<"all" | VerificationStatus>("all");
+  const [filter, setFilter] = useState<"all" | "issues">("all");
   const [sortByStatus, setSortByStatus] = useState(false);
 
   const rows = useMemo(() => {
     let r = draft.components;
-    if (filter !== "all") r = r.filter((c) => c.verification_status === filter);
+    if (filter === "issues") {
+      r = r.filter((c) => c.verification_status !== "verified");
+    }
     if (sortByStatus) {
+      // not_found/unavailable primeiro para trazer os pendentes ao topo.
       const order: Record<VerificationStatus, number> = {
-        verified: 0,
-        not_found: 1,
-        unavailable: 2,
+        not_found: 0,
+        unavailable: 1,
+        verified: 2,
       };
       r = [...r].sort(
         (a, b) => order[a.verification_status] - order[b.verification_status],
@@ -373,6 +376,7 @@ function ComponentsTable() {
     }
     return r;
   }, [draft.components, filter, sortByStatus]);
+
 
   function addComponent() {
     const item: Component = {
