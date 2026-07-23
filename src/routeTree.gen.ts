@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProjectIdReviewRouteImport } from './routes/project.$id.review'
+import { Route as ProjectIdDiagramRouteImport } from './routes/project.$id.diagram'
 
 const HistoryRoute = HistoryRouteImport.update({
   id: '/history',
@@ -22,31 +24,54 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectIdReviewRoute = ProjectIdReviewRouteImport.update({
+  id: '/project/$id/review',
+  path: '/project/$id/review',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectIdDiagramRoute = ProjectIdDiagramRouteImport.update({
+  id: '/project/$id/diagram',
+  path: '/project/$id/diagram',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
+  '/project/$id/diagram': typeof ProjectIdDiagramRoute
+  '/project/$id/review': typeof ProjectIdReviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
+  '/project/$id/diagram': typeof ProjectIdDiagramRoute
+  '/project/$id/review': typeof ProjectIdReviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
+  '/project/$id/diagram': typeof ProjectIdDiagramRoute
+  '/project/$id/review': typeof ProjectIdReviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/history'
+  fullPaths: '/' | '/history' | '/project/$id/diagram' | '/project/$id/review'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/history'
-  id: '__root__' | '/' | '/history'
+  to: '/' | '/history' | '/project/$id/diagram' | '/project/$id/review'
+  id:
+    | '__root__'
+    | '/'
+    | '/history'
+    | '/project/$id/diagram'
+    | '/project/$id/review'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HistoryRoute: typeof HistoryRoute
+  ProjectIdDiagramRoute: typeof ProjectIdDiagramRoute
+  ProjectIdReviewRoute: typeof ProjectIdReviewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +90,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/project/$id/review': {
+      id: '/project/$id/review'
+      path: '/project/$id/review'
+      fullPath: '/project/$id/review'
+      preLoaderRoute: typeof ProjectIdReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/project/$id/diagram': {
+      id: '/project/$id/diagram'
+      path: '/project/$id/diagram'
+      fullPath: '/project/$id/diagram'
+      preLoaderRoute: typeof ProjectIdDiagramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HistoryRoute: HistoryRoute,
+  ProjectIdDiagramRoute: ProjectIdDiagramRoute,
+  ProjectIdReviewRoute: ProjectIdReviewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
