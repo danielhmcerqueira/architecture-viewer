@@ -14,7 +14,10 @@ import type {
   ProjectSummary,
 } from "@/types/architecture";
 
-export const USE_MOCKS = true;
+// VITE_USE_MOCK é resolvido em BUILD TIME (não em runtime). Padrão: mock ligado.
+// Para desligar, gere o build com VITE_USE_MOCK=0.
+export const USE_MOCKS =
+  ((import.meta.env.VITE_USE_MOCK as string | undefined) ?? "1") !== "0";
 
 const MOCK_DELAY_MS = 600;
 
