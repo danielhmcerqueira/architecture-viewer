@@ -3,12 +3,9 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
-  HeadContent,
-  Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect } from "react";
 
-import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "../components/AppShell";
 import { TooltipProvider } from "../components/ui/tooltip";
@@ -19,7 +16,9 @@ function NotFoundComponent() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Página não encontrada</h2>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">
+          Página não encontrada
+        </h2>
         <p className="mt-2 text-sm text-muted-foreground">
           O endereço acessado não existe ou foi removido.
         </p>
@@ -74,46 +73,15 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Architecture Console" },
-      {
-        name: "description",
-        content:
-          "Interface de revisão e aprovação de especificações de arquitetura geradas pelo backend.",
-      },
-      { name: "robots", content: "noindex" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-    ],
-  }),
-  shellComponent: RootShell,
-  component: RootComponent,
-  notFoundComponent: NotFoundComponent,
-  errorComponent: ErrorComponent,
-});
-
-function RootShell({ children }: { children: ReactNode }) {
-  return (
-    <html lang="pt-BR">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
+// Root SPA: sem shellComponent, sem HeadContent, sem Scripts. O HTML base
+// vive em index.html e src/main.tsx monta o RouterProvider.
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
+  {
+    component: RootComponent,
+    notFoundComponent: NotFoundComponent,
+    errorComponent: ErrorComponent,
+  },
+);
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
