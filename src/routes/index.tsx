@@ -61,7 +61,7 @@ function NewProjectPage() {
     <div className="-mx-6 -my-8">
       {/* Hero — bloco da marca iebt */}
       <section
-        className="relative overflow-hidden px-6 pb-16 pt-14 sm:pb-20 sm:pt-20"
+        className="relative overflow-hidden px-6 pb-8 pt-8 sm:pb-10 sm:pt-10"
         style={{
           background: "var(--iebt-orange)",
           color: "var(--iebt-paper)",
@@ -69,7 +69,7 @@ function NewProjectPage() {
       >
         <PixelField />
 
-        <div className="relative mx-auto flex max-w-3xl flex-col gap-8">
+        <div className="relative mx-auto flex max-w-3xl flex-col gap-4">
           <div className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.28em] opacity-90">
             <PixelMark />
             <span>iebt innovation</span>
@@ -78,20 +78,19 @@ function NewProjectPage() {
           </div>
 
           <div>
-            <h1 className="font-mono text-5xl font-bold leading-[0.95] tracking-tight sm:text-6xl">
-              Um pixel por vez,<br />
-              <span className="inline-flex items-baseline gap-3">
+            <h1 className="font-mono text-2xl font-bold leading-[1.1] tracking-tight sm:text-3xl">
+              Um pixel por vez,{" "}
+              <span className="inline-flex items-baseline gap-2">
                 até a arquitetura
                 <span
                   aria-hidden
-                  className="inline-block h-9 w-9 translate-y-1 sm:h-11 sm:w-11"
+                  className="inline-block h-5 w-5 translate-y-0.5 sm:h-6 sm:w-6"
                   style={{ background: "var(--iebt-ink)" }}
                 />
-              </span>
-              <br />
+              </span>{" "}
               inteira.
             </h1>
-            <p className="mt-6 max-w-xl text-sm leading-relaxed opacity-90 sm:text-base">
+            <p className="mt-3 max-w-xl text-xs leading-relaxed opacity-90 sm:text-sm">
               Cole suas anotações técnicas. O sistema estrutura os
               componentes, aponta conflitos e prepara o desenho — sem
               decidir por você o que ainda está incerto.
@@ -124,7 +123,7 @@ function NewProjectPage() {
 
       {/* Form */}
       <section
-        className="px-6 pb-20 pt-12"
+        className="px-6 pb-20 pt-8"
         style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
       >
         <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-8">
