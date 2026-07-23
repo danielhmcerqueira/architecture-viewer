@@ -1131,33 +1131,61 @@ function SaveRevisionBar({
   onApprove: () => void;
 }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur">
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 border-t-2"
+      style={{
+        background: "var(--iebt-ink)",
+        borderColor: "var(--iebt-orange)",
+        color: "var(--iebt-paper)",
+      }}
+    >
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-6 py-3">
-        <div className="text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] opacity-80">
+          <span
+            className="inline-block h-2 w-2"
+            style={{
+              background: isDirty
+                ? "var(--iebt-orange)"
+                : approved
+                  ? "#7fe0a3"
+                  : "rgba(250,247,242,0.4)",
+            }}
+            aria-hidden
+          />
           {isDirty
-            ? "Você tem alterações não salvas."
+            ? "Alterações não salvas"
             : approved
-              ? "Arquitetura aprovada."
-              : "Nenhuma alteração pendente."}
+              ? "Arquitetura aprovada"
+              : "Sem pendências"}
         </div>
         <div className="flex items-center gap-2">
           <Button
-            variant="outline"
             onClick={onSave}
             disabled={!isDirty || saving}
+            className={iebtOutlineButtonClass}
+            style={iebtOutlineButtonStyle}
           >
-            {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
+            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
             Salvar revisão
           </Button>
           {approved ? (
-            <Button asChild>
+            <Button
+              asChild
+              className={iebtPrimaryButtonClass}
+              style={iebtPrimaryButtonStyle}
+            >
               <Link to="/project/$id/diagram" params={{ id: projectId }}>
-                Ir para diagrama <ArrowRight className="ml-1 h-4 w-4" />
+                Ir para diagrama <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           ) : (
-            <Button onClick={onApprove} disabled={!canApprove}>
-              <CheckCircle2 className="mr-1 h-4 w-4" /> Aprovar arquitetura
+            <Button
+              onClick={onApprove}
+              disabled={!canApprove}
+              className={iebtPrimaryButtonClass}
+              style={iebtPrimaryButtonStyle}
+            >
+              <CheckCircle2 className="h-4 w-4" /> Aprovar arquitetura
             </Button>
           )}
         </div>
