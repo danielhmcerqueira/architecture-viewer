@@ -78,6 +78,24 @@ export async function listProjects(): Promise<ProjectSummary[]> {
   throw new Error("Backend real ainda não conectado.");
 }
 
+export async function patchArchitecture(
+  projectId: string,
+  spec: ArchitectureSpec,
+): Promise<ArchitectureSpec> {
+  if (USE_MOCKS) {
+    const next = clone(spec);
+    next.project.id = projectId;
+    next.project.version = (spec.project.version ?? 1) + 1;
+    return delay(next);
+  }
+  // TODO(real):
+  // return apiFetch<ArchitectureSpec>(`/projects/${projectId}/architecture`, {
+  //   method: "PATCH",
+  //   body: JSON.stringify(spec),
+  // });
+  throw new Error("Backend real ainda não conectado.");
+}
+
 export async function approveArchitecture(
   projectId: string,
   approver: string,
@@ -96,6 +114,7 @@ export async function approveArchitecture(
   void approver;
   throw new Error("Backend real ainda não conectado.");
 }
+
 
 // ---- Utilitário reservado para o modo real ------------------------------
 
