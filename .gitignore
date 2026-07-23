@@ -20,6 +20,9 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Contexto local do Claude Code — não sincronizar com o Lovable
+CLAUDE.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
