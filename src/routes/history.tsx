@@ -19,9 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { USE_MOCKS } from "@/api/client";
 import { projects } from "@/api/projects";
-import { SAMPLE_DIAGRAM_XML } from "@/mocks/sampleDiagram";
 import type { ProjectStatus, ProjectSummary } from "@/types/architecture";
 
 export const Route = createFileRoute("/history")({
@@ -189,24 +187,7 @@ function ProjectRow({ row }: { row: ProjectSummary }) {
   const handleDownload = useCallback(() => {
     if (!hasDiagram) return;
     const fileName = row.last_diagram_file_name ?? `${row.id}-arquitetura.drawio`;
-    if (USE_MOCKS) {
-      const blob = new Blob([SAMPLE_DIAGRAM_XML], { type: "application/xml" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 0);
-      return;
-    }
-    const a = document.createElement("a");
-    a.href = projects.diagramDownloadUrl(row.id);
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    void projects.downloadDiagram(row.id, fileName);
   }, [row.id, row.last_diagram_file_name, hasDiagram]);
 
   const handleNewVersion = useCallback(() => {

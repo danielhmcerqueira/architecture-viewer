@@ -14,7 +14,10 @@ import type {
   ProjectSummary,
 } from "@/types/architecture";
 
-export const USE_MOCKS = true;
+// VITE_USE_MOCK é resolvido em BUILD TIME (não em runtime). Padrão: mock ligado.
+// Para desligar, gere o build com VITE_USE_MOCK=0.
+export const USE_MOCKS =
+  ((import.meta.env.VITE_USE_MOCK as string | undefined) ?? "1") !== "0";
 
 const MOCK_DELAY_MS = 600;
 
@@ -136,10 +139,39 @@ export async function generateDiagram(projectId: string): Promise<DiagramInfo> {
   throw new Error("Backend real ainda não conectado.");
 }
 
-// URL usada pelo <a download> no modo real. No mock, o download é montado
-// em memória a partir de `SAMPLE_DIAGRAM_XML` no próprio componente.
+// URL usada pelo <a download> no modo real.
 export function diagramDownloadUrl(projectId: string): string {
   return `${API_BASE_URL}/api/projects/${encodeURIComponent(projectId)}/diagram/download`;
+}
+
+// Baixa o arquivo .drawio e dispara o download no navegador.
+// Encapsula a diferença entre mock (Blob em memória a partir do XML de
+// amostra) e real (GET binário no backend), para que componentes não
+// precisem saber qual modo está ativo nem importar de src/mocks/.
+export async function downloadDiagram(
+  projectId: string,
+  fileName?: string,
+): Promise<void> {
+  const name = fileName ?? `${projectId}-arquitetura.drawio`;
+  let href: string;
+  let cleanup: (() => void) | null = null;
+
+  if (USE_MOCKS) {
+    const { SAMPLE_DIAGRAM_XML } = await import("@/mocks/sampleDiagram");
+    const blob = new Blob([SAMPLE_DIAGRAM_XML], { type: "application/xml" });
+    href = URL.createObjectURL(blob);
+    cleanup = () => URL.revokeObjectURL(href);
+  } else {
+    href = diagramDownloadUrl(projectId);
+  }
+
+  const a = document.createElement("a");
+  a.href = href;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  if (cleanup) setTimeout(cleanup, 0);
 }
 
 

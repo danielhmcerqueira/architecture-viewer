@@ -7,6 +7,7 @@ import {
   approveArchitecture,
   createProject,
   diagramDownloadUrl,
+  downloadDiagram,
   generateDiagram,
   getArchitecture,
   listProjects,
@@ -30,4 +31,6 @@ export const projects = {
   ): Promise<ArchitectureSpec> => approveArchitecture(id, approver),
   generateDiagram: (id: string): Promise<DiagramInfo> => generateDiagram(id),
   diagramDownloadUrl: (id: string): string => diagramDownloadUrl(id),
+  downloadDiagram: (id: string, fileName?: string): Promise<void> =>
+    downloadDiagram(id, fileName),
 };

@@ -4,10 +4,9 @@ import { AlertCircle, Download, ExternalLink, FileWarning, Loader2, RefreshCw } 
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { USE_MOCKS, type DiagramInfo } from "@/api/client";
+import { type DiagramInfo } from "@/api/client";
 import { projects } from "@/api/projects";
 import { useProgressEvents } from "@/hooks/useProgressEvents";
-import { SAMPLE_DIAGRAM_XML } from "@/mocks/sampleDiagram";
 import type { ArchitectureSpec } from "@/types/architecture";
 
 export const Route = createFileRoute("/project/$id/diagram")({
@@ -222,29 +221,8 @@ function ResultCard({
   onRegenerate: () => void;
 }) {
   const handleDownload = useCallback(() => {
-    if (USE_MOCKS) {
-      // Mock: entrega um arquivo ESTÁTICO como Blob. Não construímos XML
-      // a partir dos dados da arquitetura.
-      const blob = new Blob([SAMPLE_DIAGRAM_XML], { type: "application/xml" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = info.file_name;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 0);
-      return;
-    }
-    // Real: o backend responde binário direto no GET; deixamos o navegador
-    // baixar via <a download>.
-    const a = document.createElement("a");
-    a.href = projects.diagramDownloadUrl(projectId);
-    a.download = info.file_name;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }, [projectId, info]);
+    void projects.downloadDiagram(projectId, info.file_name);
+  }, [projectId, info.file_name]);
 
   const generatedAt = new Date(info.generated_at).toLocaleString("pt-BR");
 
