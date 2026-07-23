@@ -4,10 +4,7 @@
 // Exemplo: plataforma de pedidos B2B rodando em Google Cloud, integrada
 // a um ERP legado.
 
-import type {
-  ArchitectureSpec,
-  ProjectSummary,
-} from "@/types/architecture";
+import type { ArchitectureSpec } from "@/types/architecture";
 
 export const sampleArchitecture: ArchitectureSpec = {
   project: {
