@@ -23,10 +23,23 @@ const BASE_SEQUENCE: SseEventName[] = [
   "READY_FOR_REVIEW",
 ];
 
-function buildScenario(scenario: SseScenario): {
+function buildScenario(
+  scenario: SseScenario,
+  channel: "structuring" | "diagram",
+): {
   steps: Step[];
   crash?: number; // ms até "queda de conexão"
 } {
+  if (channel === "diagram") {
+    // Roteiro fixo do canal de diagrama. Independe do cenário — o backend
+    // real também emite apenas esses dois eventos.
+    return {
+      steps: [
+        { name: "DIAGRAM_GENERATION_STARTED", delayMs: 700 },
+        { name: "COMPLETED", delayMs: 1400 },
+      ],
+    };
+  }
   switch (scenario) {
     case "fast": {
       return {
@@ -74,8 +87,10 @@ function buildScenario(scenario: SseScenario): {
 export function mockSubscribeProgress(
   _projectId: string,
   handlers: SubscribeHandlers,
+  opts?: { channel?: "structuring" | "diagram" },
 ): Unsubscribe {
-  const { steps, crash } = buildScenario(ACTIVE_SSE_SCENARIO);
+  const channel = opts?.channel ?? "structuring";
+  const { steps, crash } = buildScenario(ACTIVE_SSE_SCENARIO, channel);
   const timers: ReturnType<typeof setTimeout>[] = [];
   let cancelled = false;
 
