@@ -7,7 +7,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
 import { useProgressEvents } from "@/hooks/useProgressEvents";
-import { getActiveMockScenario() } from "@/api/events";
+import { getActiveMockScenario } from "@/api/events";
 
 export const Route = createFileRoute("/dev/sse")({
   head: () => ({
