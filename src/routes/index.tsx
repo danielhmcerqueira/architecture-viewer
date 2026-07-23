@@ -123,7 +123,7 @@ function NewProjectPage() {
 
       {/* Form */}
       <section
-        className="px-6 pb-20 pt-12"
+        className="px-6 pb-20 pt-8"
         style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
       >
         <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-8">
