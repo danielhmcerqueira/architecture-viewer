@@ -104,6 +104,21 @@ export const sampleArchitecture: ArchitectureSpec = {
       verification_status: "verified",
       evidence_ids: ["e7"],
     },
+    {
+      // Componente deliberadamente SEM evidência (evidence_ids vazio).
+      // Exercita o estado "Sem evidências" da aba Evidências — cenário que
+      // o backend real produz quando a verificação MCP ainda não rodou.
+      id: "c8",
+      name: "Cache de Catálogo",
+      category: "Cache",
+      technology: "Memorystore for Redis",
+      responsibility: "Cache de leitura do catálogo de produtos para a API.",
+      environment: "production",
+      region: "us-east1",
+      notes: "Verificação documental ainda não executada.",
+      verification_status: "unavailable",
+      evidence_ids: [],
+    },
   ],
   relations: [
     {
@@ -176,19 +191,29 @@ export const sampleArchitecture: ArchitectureSpec = {
       information_type: "Logs e métricas",
       description: "Exportação de telemetria para observabilidade.",
     },
+    {
+      id: "r8",
+      source_id: "c2",
+      target_id: "c8",
+      protocol: "TCP/Redis",
+      direction: "bidirectional",
+      sync: "sync",
+      information_type: "Entradas de catálogo",
+      description: "Leitura com cache-aside; escrita na invalidação.",
+    },
   ],
   environments: [
     {
       id: "env1",
       name: "Desenvolvimento",
       type: "dev",
-      component_ids: ["c1", "c2", "c3", "c4", "c5", "c7"],
+      component_ids: ["c1", "c2", "c3", "c4", "c5", "c7", "c8"],
     },
     {
       id: "env2",
       name: "Produção",
       type: "production",
-      component_ids: ["c1", "c2", "c3", "c4", "c5", "c6", "c7"],
+      component_ids: ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"],
     },
   ],
   assumptions: [
