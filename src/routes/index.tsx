@@ -26,6 +26,15 @@ function NewProjectPage() {
   const [name, setName] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const notesRef = useRef<HTMLTextAreaElement>(null);
+
+  // Cresce a textarea conforme o conteúdo, respeitando o mínimo do CSS.
+  useEffect(() => {
+    const el = notesRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [notes]);
 
   const { lines, chars } = useMemo(() => {
     const c = notes.length;
