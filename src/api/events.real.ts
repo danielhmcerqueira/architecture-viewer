@@ -43,7 +43,11 @@ function parsePayload(raw: string, name: SseEventName): ProgressEvent {
 export function realSubscribeProgress(
   projectId: string,
   handlers: SubscribeHandlers,
+  _opts?: { channel?: "structuring" | "diagram" },
 ): Unsubscribe {
+  // O backend emite todos os eventos por um único stream; o parâmetro de
+  // canal existe apenas para paridade com o mock e é ignorado aqui.
+  void _opts;
   const url = `${API_BASE_URL}/api/projects/${encodeURIComponent(projectId)}/events`;
   const source = new EventSource(url);
 
