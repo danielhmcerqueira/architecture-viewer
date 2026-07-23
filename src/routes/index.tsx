@@ -81,12 +81,13 @@ function NewProjectPage() {
           </div>
           <Textarea
             id="notes"
+            ref={notesRef}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            rows={28}
+            rows={12}
             spellCheck={false}
             placeholder={`Descreva componentes, integrações, ambientes, restrições…\nUma ideia por linha ajuda a leitura posterior.`}
-            className="min-h-[520px] resize-y font-mono text-sm leading-6"
+            className="min-h-[260px] resize-none overflow-hidden font-mono text-sm leading-6"
           />
         </div>
 
