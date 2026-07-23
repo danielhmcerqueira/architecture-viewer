@@ -12,11 +12,7 @@ import {
 } from "lucide-react";
 
 import { APPROVER_NAME } from "@/config";
-import {
-  approveArchitecture,
-  getArchitecture,
-  patchArchitecture,
-} from "@/api/client";
+import { projects } from "@/api/projects";
 import type {
   ArchitectureSpec,
   Component,
