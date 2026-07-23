@@ -132,6 +132,17 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+/* -----------------------------------------------------------------------
+ * IEBT brand tokens — usados apenas em telas que referenciam via
+ * var(--iebt-*). Não afetam o tema semântico global.
+ * ---------------------------------------------------------------------- */
+:root {
+  --iebt-orange: #ff4f1c;
+  --iebt-orange-deep: #d63b0e;
+  --iebt-ink: #141414;
+  --iebt-paper: #faf7f2;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
