@@ -198,7 +198,7 @@ function HistoryPage() {
 
               <SectionLabel index="02" title="Projetos" />
               <TooltipProvider delayDuration={200}>
-                <PaperCard className="overflow-x-auto">
+                <PaperCard>
                   <Table>
                     <TableHeader>
                       <TableRow
