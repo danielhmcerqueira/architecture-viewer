@@ -28,6 +28,16 @@ import {
   useArchitectureDraft,
 } from "@/features/review/ArchitectureDraftContext";
 import { VerificationBadge } from "@/components/VerificationBadge";
+import {
+  PageHero,
+  PaperCard,
+  SectionLabel,
+  StatusStrip,
+  iebtOutlineButtonClass,
+  iebtOutlineButtonStyle,
+  iebtPrimaryButtonClass,
+  iebtPrimaryButtonStyle,
+} from "@/components/iebt";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
