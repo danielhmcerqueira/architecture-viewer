@@ -1,20 +1,20 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+
+import { createProject } from "@/api/client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { projectsApi } from "@/api";
-import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Novo projeto — Architecture Console" },
+      { title: "Novo projeto — Arquiteto" },
       {
         name: "description",
-        content: "Descreva um novo projeto para o backend estruturar a arquitetura.",
+        content:
+          "Cole as anotações técnicas do seu projeto para estruturar a arquitetura.",
       },
     ],
   }),
@@ -24,71 +24,78 @@ export const Route = createFileRoute("/")({
 function NewProjectPage() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [text, setText] = useState("");
+  const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const { lines, chars } = useMemo(() => {
+    const c = notes.length;
+    const l = notes.length === 0 ? 0 : notes.split("\n").length;
+    return { lines: l, chars: c };
+  }, [notes]);
+
+  const canSubmit = name.trim().length > 0 && notes.trim().length > 0 && !submitting;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || !text.trim()) {
-      toast.error("Preencha o nome do projeto e o texto de entrada.");
-      return;
-    }
+    if (!canSubmit) return;
     setSubmitting(true);
     try {
-      const { id } = await projectsApi.createProject({ name: name.trim(), description: description.trim() });
-      await projectsApi.sendInput(id, text);
-      await projectsApi.triggerStructuring(id);
+      const { id } = await createProject({ name: name.trim(), notes });
       navigate({ to: "/project/$id/review", params: { id } });
     } catch (err) {
       console.error(err);
-      toast.error("Falha ao criar o projeto.");
-    } finally {
       setSubmitting(false);
     }
   }
 
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="text-2xl font-semibold tracking-tight">Novo projeto</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Descreva o sistema a ser modelado. O backend estrutura e devolve uma proposta de arquitetura
-        para você revisar e aprovar.
-      </p>
+      <header className="mb-6">
+        <h1 className="text-2xl font-semibold tracking-tight">Novo projeto</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Cole abaixo as anotações técnicas do sistema. Elas podem estar
+          incompletas ou conter contradições — o sistema vai apontar conflitos
+          em vez de escolher sozinho.
+        </p>
+      </header>
 
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Entrada</CardTitle>
-          <CardDescription>Nome, descrição curta e texto livre com o contexto do projeto.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="name">Nome do projeto</Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex.: Plataforma de Pedidos" />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="desc">Descrição curta (opcional)</Label>
-              <Input id="desc" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Uma frase sobre o objetivo do projeto" />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="text">Texto de entrada</Label>
-              <Textarea
-                id="text"
-                rows={12}
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="Cole aqui a descrição completa do sistema, requisitos, integrações conhecidas, restrições..."
-              />
-            </div>
-            <div className="flex justify-end">
-              <Button type="submit" disabled={submitting}>
-                {submitting ? "Enviando..." : "Criar projeto"}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="space-y-1.5">
+          <Label htmlFor="name">Nome do projeto</Label>
+          <Input
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Ex.: Plataforma de Pedidos B2B"
+            autoComplete="off"
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="flex items-baseline justify-between">
+            <Label htmlFor="notes">Anotações técnicas</Label>
+            <span className="text-xs tabular-nums text-muted-foreground">
+              {lines} linha{lines === 1 ? "" : "s"} · {chars} caractere
+              {chars === 1 ? "" : "s"}
+            </span>
+          </div>
+          <Textarea
+            id="notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={28}
+            spellCheck={false}
+            placeholder={`Descreva componentes, integrações, ambientes, restrições…\nUma ideia por linha ajuda a leitura posterior.`}
+            className="min-h-[520px] resize-y font-mono text-sm leading-6"
+          />
+        </div>
+
+        <div className="flex items-center justify-end gap-3">
+          <Button type="submit" disabled={!canSubmit}>
+            {submitting ? "Estruturando…" : "Estruturar arquitetura"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }
