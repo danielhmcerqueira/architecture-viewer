@@ -170,16 +170,7 @@ function HistoryPage() {
             </PaperCard>
           ) : (
             <>
-              <SectionLabel
-                index="01"
-                title="Busca"
-                meta={
-                  <span className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-60">
-                    {filteredSorted.length.toString().padStart(3, "0")} de{" "}
-                    {rows.length.toString().padStart(3, "0")}
-                  </span>
-                }
-              />
+              <SectionLabel title="Busca" />
               <div
                 className="relative border-2"
                 style={{
