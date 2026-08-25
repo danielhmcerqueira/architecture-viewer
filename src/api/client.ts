@@ -46,7 +46,7 @@ export async function createProject(
   input: CreateProjectInput,
 ): Promise<CreateProjectResponse> {
   if (USE_MOCKS) {
-    const id = `mock-${Date.now().toString(36)}`;
+    const id = String(1005 + Math.floor((Date.now() / 1000) % 1000));
     return delay({ id });
   }
   // TODO(real):
