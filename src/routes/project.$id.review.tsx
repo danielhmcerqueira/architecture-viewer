@@ -302,6 +302,88 @@ function IebtTabTrigger({
   );
 }
 
+// -------------------- Detalhes --------------------
+
+function DetailsPanel({
+  detailTab,
+  onDetailTabChange,
+}: {
+  detailTab: string;
+  onDetailTabChange: (v: string) => void;
+}) {
+  const { draft } = useArchitectureDraft();
+  const openGaps = draft.gaps.filter((g) => g.status === "open");
+
+  return (
+    <div className="space-y-4">
+      <Tabs value={detailTab} onValueChange={onDetailTabChange}>
+        <TabsList
+          className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-none border-2 bg-white p-1"
+          style={{ borderColor: "var(--iebt-ink)" }}
+        >
+          <IebtTabTrigger value="components">
+            Componentes
+            <Badge
+              variant="secondary"
+              className="ml-2 rounded-none font-mono"
+            >
+              {draft.components.length}
+            </Badge>
+          </IebtTabTrigger>
+          <IebtTabTrigger value="relations">
+            Relações
+            <Badge
+              variant="secondary"
+              className="ml-2 rounded-none font-mono"
+            >
+              {draft.relations.length}
+            </Badge>
+          </IebtTabTrigger>
+          <IebtTabTrigger value="environments">Ambientes</IebtTabTrigger>
+          <IebtTabTrigger value="assumptions">Premissas</IebtTabTrigger>
+          <IebtTabTrigger value="gaps">
+            Lacunas
+            {openGaps.length > 0 && (
+              <span
+                className="ml-2 inline-flex items-center px-1.5 py-0.5 font-mono text-[10px] tracking-wider"
+                style={{
+                  background: "var(--iebt-orange)",
+                  color: "var(--iebt-paper)",
+                }}
+              >
+                {openGaps.length}
+              </span>
+            )}
+          </IebtTabTrigger>
+          <IebtTabTrigger value="evidence">Evidências</IebtTabTrigger>
+        </TabsList>
+
+        <TabsContent value="components" className="mt-4">
+          <ComponentsTable />
+        </TabsContent>
+        <TabsContent value="relations" className="mt-4">
+          <RelationsTable />
+        </TabsContent>
+        <TabsContent value="environments" className="mt-4">
+          <EnvironmentsPanel />
+        </TabsContent>
+        <TabsContent value="assumptions" className="mt-4">
+          <AssumptionsList />
+        </TabsContent>
+        <TabsContent value="gaps" className="mt-4">
+          <GapsPanel />
+        </TabsContent>
+        <TabsContent value="evidence" className="mt-4">
+          <EvidenceList
+            evidence={draft.evidence}
+            components={draft.components}
+          />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
 // -------------------- Diagrama --------------------
 
 function DiagramSection({ projectId }: { projectId: string }) {
