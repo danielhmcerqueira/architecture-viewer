@@ -120,7 +120,6 @@ function NewProjectPage() {
       >
         <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-8">
           <FieldBlock
-            index="03"
             title="Anotações técnicas"
             meta={
               <span className="font-mono tabular-nums opacity-70">
