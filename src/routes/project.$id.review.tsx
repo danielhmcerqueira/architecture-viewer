@@ -187,7 +187,7 @@ function ReviewScreen({
             </span>
           </>
         }
-        description="Ajuste componentes, relações e evidências. Cada salvar gera uma nova versão no backend."
+        description="Ajuste componentes, relações e evidências."
       />
       <StatusStrip
         left={<>arquitetura · v{draft.project.version}</>}
