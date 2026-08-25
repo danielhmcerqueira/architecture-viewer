@@ -8,7 +8,7 @@ import type { ArchitectureSpec } from "@/types/architecture";
 
 export const sampleArchitecture: ArchitectureSpec = {
   project: {
-    id: "mock-project",
+    id: "1002",
     name: "Plataforma de Pedidos B2B",
     description:
       "Sistema de recebimento e processamento de pedidos de clientes B2B com integração ao ERP existente.",
