@@ -145,7 +145,8 @@ function ReviewScreen({
   refetch: () => void;
 }) {
   const { draft, isDirty, dispatch } = useArchitectureDraft();
-  const [tab, setTab] = useState("overview");
+  const [tab, setTab] = useState("presentation");
+  const [detailTab, setDetailTab] = useState("components");
   const [saving, setSaving] = useState(false);
   const [approveOpen, setApproveOpen] = useState(false);
 
@@ -204,36 +205,14 @@ function ReviewScreen({
         style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
       >
         <div className="mx-auto max-w-5xl space-y-6">
-
-
           <Tabs value={tab} onValueChange={setTab}>
             <TabsList
-              className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-none border-2 bg-white p-1"
+              className="flex h-auto w-full justify-center gap-1 rounded-none border-2 bg-white p-1"
               style={{ borderColor: "var(--iebt-ink)" }}
             >
-              <IebtTabTrigger value="overview">Visão geral</IebtTabTrigger>
-              <IebtTabTrigger value="components">
-                Componentes
-                <Badge
-                  variant="secondary"
-                  className="ml-2 rounded-none font-mono"
-                >
-                  {draft.components.length}
-                </Badge>
-              </IebtTabTrigger>
-              <IebtTabTrigger value="relations">
-                Relações
-                <Badge
-                  variant="secondary"
-                  className="ml-2 rounded-none font-mono"
-                >
-                  {draft.relations.length}
-                </Badge>
-              </IebtTabTrigger>
-              <IebtTabTrigger value="environments">Ambientes</IebtTabTrigger>
-              <IebtTabTrigger value="assumptions">Premissas</IebtTabTrigger>
-              <IebtTabTrigger value="gaps">
-                Lacunas
+              <IebtTabTrigger value="presentation">Apresentação</IebtTabTrigger>
+              <IebtTabTrigger value="details">
+                Detalhes
                 {openGaps.length > 0 && (
                   <span
                     className="ml-2 inline-flex items-center px-1.5 py-0.5 font-mono text-[10px] tracking-wider"
@@ -246,35 +225,22 @@ function ReviewScreen({
                   </span>
                 )}
               </IebtTabTrigger>
-              <IebtTabTrigger value="evidence">Evidências</IebtTabTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="mt-4">
+            <TabsContent value="presentation" className="mt-4">
               <OverviewPanel
                 spec={draft}
                 openGapsCount={openGaps.length}
-                onGoToGaps={() => setTab("gaps")}
+                onGoToGaps={() => {
+                  setTab("details");
+                  setDetailTab("gaps");
+                }}
               />
             </TabsContent>
-            <TabsContent value="components" className="mt-4">
-              <ComponentsTable />
-            </TabsContent>
-            <TabsContent value="relations" className="mt-4">
-              <RelationsTable />
-            </TabsContent>
-            <TabsContent value="environments" className="mt-4">
-              <EnvironmentsPanel />
-            </TabsContent>
-            <TabsContent value="assumptions" className="mt-4">
-              <AssumptionsList />
-            </TabsContent>
-            <TabsContent value="gaps" className="mt-4">
-              <GapsPanel />
-            </TabsContent>
-            <TabsContent value="evidence" className="mt-4">
-              <EvidenceList
-                evidence={draft.evidence}
-                components={draft.components}
+            <TabsContent value="details" className="mt-4">
+              <DetailsPanel
+                detailTab={detailTab}
+                onDetailTabChange={setDetailTab}
               />
             </TabsContent>
           </Tabs>
