@@ -24,7 +24,6 @@ export const Route = createFileRoute("/")({
 
 function NewProjectPage() {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const notesRef = useRef<HTMLTextAreaElement>(null);
@@ -42,14 +41,14 @@ function NewProjectPage() {
     return { lines: l, chars: c };
   }, [notes]);
 
-  const canSubmit = name.trim().length > 0 && notes.trim().length > 0 && !submitting;
+  const canSubmit = notes.trim().length > 0 && !submitting;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit) return;
     setSubmitting(true);
     try {
-      const { id } = await createProject({ name: name.trim(), notes });
+      const { id } = await createProject({ name: "Projeto", notes });
       navigate({ to: "/project/$id/review", params: { id } });
     } catch (err) {
       console.error(err);
