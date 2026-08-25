@@ -278,7 +278,20 @@ function ReviewScreen({
               />
             </TabsContent>
           </Tabs>
+
+          <DiagramSection projectId={projectId} />
+
+          <div className="flex justify-end pt-2">
+            <Button
+              asChild
+              className={iebtPrimaryButtonClass}
+              style={iebtPrimaryButtonStyle}
+            >
+              <Link to="/">Criar nova versão</Link>
+            </Button>
+          </div>
         </div>
+
       </section>
 
       <SaveRevisionBar
