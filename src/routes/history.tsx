@@ -258,7 +258,7 @@ function ProjectRow({ row }: { row: ProjectSummary }) {
   const handleDownload = useCallback(() => {
     if (!hasDiagram) return;
     const fileName =
-      row.last_diagram_file_name ?? `${row.id}-arquitetura.drawio`;
+      row.last_diagram_file_name ?? `${row.id}-arquitetura.html`;
     void projects.downloadDiagram(row.id, fileName);
   }, [row.id, row.last_diagram_file_name, hasDiagram]);
 

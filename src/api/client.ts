@@ -131,7 +131,7 @@ export interface DiagramInfo {
 export async function generateDiagram(projectId: string): Promise<DiagramInfo> {
   if (USE_MOCKS) {
     return delay({
-      file_name: `${projectId}-arquitetura.drawio`,
+      file_name: `${projectId}-arquitetura.html`,
       version: 1,
       generated_at: new Date().toISOString(),
     });
@@ -148,7 +148,7 @@ export function diagramDownloadUrl(projectId: string): string {
   return `${API_BASE_URL}/api/projects/${encodeURIComponent(projectId)}/diagram/download`;
 }
 
-// Baixa o arquivo .drawio e dispara o download no navegador.
+// Baixa o arquivo .html e dispara o download no navegador.
 // Encapsula a diferença entre mock (Blob em memória a partir do XML de
 // amostra) e real (GET binário no backend), para que componentes não
 // precisem saber qual modo está ativo nem importar de src/mocks/.
@@ -156,7 +156,7 @@ export async function downloadDiagram(
   projectId: string,
   fileName?: string,
 ): Promise<void> {
-  const name = fileName ?? `${projectId}-arquitetura.drawio`;
+  const name = fileName ?? `${projectId}-arquitetura.html`;
   let href: string;
   let cleanup: (() => void) | null = null;
 
