@@ -204,7 +204,7 @@ function ReviewScreen({
         style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
       >
         <div className="mx-auto max-w-5xl space-y-6">
-          <ProjectHeader />
+
 
           <Tabs value={tab} onValueChange={setTab}>
             <TabsList
@@ -278,7 +278,20 @@ function ReviewScreen({
               />
             </TabsContent>
           </Tabs>
+
+          <DiagramSection projectId={projectId} />
+
+          <div className="flex justify-end pt-2">
+            <Button
+              asChild
+              className={iebtPrimaryButtonClass}
+              style={iebtPrimaryButtonStyle}
+            >
+              <Link to="/">Criar nova versão</Link>
+            </Button>
+          </div>
         </div>
+
       </section>
 
       <SaveRevisionBar
@@ -323,59 +336,84 @@ function IebtTabTrigger({
   );
 }
 
-// -------------------- Header --------------------
+// -------------------- Diagrama --------------------
 
-function ProjectHeader() {
-  const { draft, dispatch } = useArchitectureDraft();
-  const p = draft.project;
+function DiagramSection({ projectId }: { projectId: string }) {
+  const [state, setState] = useState<"idle" | "loading" | "done" | "error">(
+    "idle",
+  );
+  const [info, setInfo] = useState<{
+    file_name: string;
+    version: number;
+    generated_at: string;
+  } | null>(null);
+
+  async function generate() {
+    setState("loading");
+    try {
+      const result = await projects.generateDiagram(projectId);
+      setInfo(result);
+      setState("done");
+    } catch (e) {
+      console.error(e);
+      setState("error");
+      toast.error("Falha ao gerar o diagrama.");
+    }
+  }
+
   return (
     <PaperCard as="section" className="p-5">
-      <SectionLabel
-        index="01"
-        title="Identificação"
-        meta={
-          <span
-            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em]"
-            style={{ color: "var(--iebt-orange-deep)" }}
-          >
-            <span
-              className="inline-block h-2 w-2"
-              style={{ background: "var(--iebt-orange)" }}
-              aria-hidden
-            />
-            v{p.version} · {p.status.toLowerCase()}
-          </span>
-        }
-      />
-      <div className="mt-4 flex items-start justify-between gap-4">
-        <div className="flex-1 space-y-2">
-          <Input
-            value={p.name}
-            onChange={(e) =>
-              dispatch({
-                type: "patchProject",
-                patch: { name: e.target.value },
-              })
-            }
-            className="h-auto rounded-none border-0 border-b-2 bg-transparent px-0 font-mono text-2xl tracking-tight shadow-none focus-visible:ring-0"
-            style={{ borderBottomColor: "var(--iebt-ink)" }}
-          />
-          <Textarea
-            value={p.description}
-            onChange={(e) =>
-              dispatch({
-                type: "patchProject",
-                patch: { description: e.target.value },
-              })
-            }
-            rows={2}
-            className="resize-none rounded-none border-0 bg-transparent px-0 text-sm opacity-80 shadow-none focus-visible:ring-0"
-          />
+      <SectionLabel title="Diagrama gerado" />
+      <p className="mt-3 max-w-xl text-sm opacity-70">
+        O backend devolve o arquivo do diagrama a partir da arquitetura acima.
+      </p>
+
+      {state === "done" && info ? (
+        <div className="mt-4 space-y-3">
+          <div className="font-mono text-[12px] uppercase tracking-[0.18em] opacity-70">
+            {info.file_name} · v{info.version}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              onClick={() => projects.downloadDiagram(projectId, info.file_name)}
+              className={iebtPrimaryButtonClass}
+              style={iebtPrimaryButtonStyle}
+            >
+              Baixar .html
+            </Button>
+            <Button
+              onClick={generate}
+              className={iebtOutlineButtonClass}
+              style={iebtOutlineButtonStyle}
+            >
+              Gerar novamente
+            </Button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="mt-4">
+          <Button
+            onClick={generate}
+            disabled={state === "loading"}
+            className={iebtPrimaryButtonClass}
+            style={iebtPrimaryButtonStyle}
+          >
+            {state === "loading" ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> gerando…
+              </>
+            ) : state === "error" ? (
+              "Tentar novamente"
+            ) : (
+              "Gerar diagrama"
+            )}
+          </Button>
+        </div>
+      )}
     </PaperCard>
   );
 }
+
 
 // -------------------- Overview --------------------
 
