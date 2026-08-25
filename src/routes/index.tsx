@@ -108,9 +108,8 @@ function NewProjectPage() {
               style={{ background: "var(--iebt-orange)" }}
               aria-hidden
             />
-            entrada · 01
+            anotações → arquitetura
           </span>
-          <span>anotações → arquitetura</span>
         </div>
       </div>
 
