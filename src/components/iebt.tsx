@@ -140,19 +140,21 @@ export function SectionLabel({
   title,
   meta,
 }: {
-  index: string;
+  index?: string;
   title: string;
   meta?: ReactNode;
 }) {
   return (
     <div className="flex items-baseline justify-between gap-4">
       <div className="flex items-baseline gap-3">
-        <span
-          className="font-mono text-[11px] tracking-[0.24em] opacity-60"
-          style={{ color: "var(--iebt-orange-deep)" }}
-        >
-          /{index}
-        </span>
+        {index && (
+          <span
+            className="font-mono text-[11px] tracking-[0.24em] opacity-60"
+            style={{ color: "var(--iebt-orange-deep)" }}
+          >
+            /{index}
+          </span>
+        )}
         <span className="font-mono text-[13px] uppercase tracking-[0.18em]">
           {title}
         </span>
