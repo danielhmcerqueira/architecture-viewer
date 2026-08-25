@@ -111,7 +111,7 @@ function HistoryPage() {
             estruturado.
           </>
         }
-        description="Todos os projetos que passaram pelo Arquiteto. Abra, baixe o .drawio ou inicie uma nova versão."
+        description="Todos os projetos que passaram pelo Arquiteto"
         actions={
           <Button
             asChild
