@@ -304,7 +304,7 @@ function ProjectRow({ row }: { row: ProjectSummary }) {
                   className="h-8 rounded-none border font-mono text-[11px] uppercase tracking-[0.18em]"
                   style={{ borderColor: "var(--iebt-ink)" }}
                 >
-                  <Download className="mr-1.5 h-3.5 w-3.5" /> .drawio
+                  <Download className="mr-1.5 h-3.5 w-3.5" /> .html
                 </Button>
               </span>
             </TooltipTrigger>
