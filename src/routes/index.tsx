@@ -4,7 +4,6 @@ import { ArrowRight } from "lucide-react";
 
 import { createProject } from "@/api/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -24,7 +23,6 @@ export const Route = createFileRoute("/")({
 
 function NewProjectPage() {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const notesRef = useRef<HTMLTextAreaElement>(null);
@@ -42,14 +40,14 @@ function NewProjectPage() {
     return { lines: l, chars: c };
   }, [notes]);
 
-  const canSubmit = name.trim().length > 0 && notes.trim().length > 0 && !submitting;
+  const canSubmit = notes.trim().length > 0 && !submitting;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit) return;
     setSubmitting(true);
     try {
-      const { id } = await createProject({ name: name.trim(), notes });
+      const { id } = await createProject({ name: "Projeto", notes });
       navigate({ to: "/project/$id/review", params: { id } });
     } catch (err) {
       console.error(err);
@@ -122,18 +120,6 @@ function NewProjectPage() {
         style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
       >
         <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-8">
-          <FieldBlock index="02" title="Nome do projeto">
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Ex.: Plataforma de Pedidos B2B"
-              autoComplete="off"
-              className="h-12 rounded-none border-0 border-b-2 bg-transparent px-0 font-mono text-base shadow-none focus-visible:ring-0"
-              style={{ borderBottomColor: "var(--iebt-ink)" }}
-            />
-          </FieldBlock>
-
           <FieldBlock
             index="03"
             title="Anotações técnicas"
