@@ -121,18 +121,6 @@ function NewProjectPage() {
         style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
       >
         <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-8">
-          <FieldBlock index="02" title="Nome do projeto">
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Ex.: Plataforma de Pedidos B2B"
-              autoComplete="off"
-              className="h-12 rounded-none border-0 border-b-2 bg-transparent px-0 font-mono text-base shadow-none focus-visible:ring-0"
-              style={{ borderBottomColor: "var(--iebt-ink)" }}
-            />
-          </FieldBlock>
-
           <FieldBlock
             index="03"
             title="Anotações técnicas"
