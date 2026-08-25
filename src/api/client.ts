@@ -46,7 +46,11 @@ export async function createProject(
   input: CreateProjectInput,
 ): Promise<CreateProjectResponse> {
   if (USE_MOCKS) {
-    const id = String(1005 + Math.floor((Date.now() / 1000) % 1000));
+    const maxId = sampleProjectHistory.reduce((max, p) => {
+      const n = Number(p.id);
+      return Number.isNaN(n) ? max : Math.max(max, n);
+    }, 0);
+    const id = String(maxId + 1);
     return delay({ id });
   }
   // TODO(real):
