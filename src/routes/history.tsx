@@ -187,7 +187,7 @@ function HistoryPage() {
                 />
               </div>
 
-              <SectionLabel index="02" title="Projetos" />
+              <SectionLabel title="Projetos" />
               <TooltipProvider delayDuration={200}>
                 <PaperCard>
                   <Table>
