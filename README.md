@@ -59,8 +59,8 @@ Todos com prefixo `${VITE_API_BASE_URL}`. Bodies em JSON, exceto o download bin�
 | GET    | `/projects/:id/architecture`                | Retorna a `ArchitectureSpec` completa do projeto.                         |
 | PATCH  | `/projects/:id/architecture`                | Substitui a `ArchitectureSpec` inteira. Retorna a nova versão.            |
 | POST   | `/projects/:id/approve`                     | Body: `{ approver }`. Marca o projeto como `APPROVED`.                    |
-| POST   | `/api/projects/:id/diagram`                 | Dispara a geração do `.drawio`. Retorna `DiagramInfo`.                    |
-| GET    | `/api/projects/:id/diagram/download`        | Devolve o binário `.drawio` (usado pelo `<a download>`).                  |
+| POST   | `/api/projects/:id/diagram`                 | Dispara a geração do `.html`. Retorna `DiagramInfo`.                    |
+| GET    | `/api/projects/:id/diagram/download`        | Devolve o binário `.html` (usado pelo `<a download>`).                  |
 | GET    | `/api/projects/:id/events`                  | Stream **SSE** de progresso. Eventos com `data: JSON` no formato do hook. |
 
 Os tipos exatos vivem em `src/types/architecture.ts`. O contrato de eventos SSE está documentado em `src/hooks/useProgressEvents.ts` e nas implementações de `src/api/events.real.ts` / `src/api/mock/events.mock.ts`.

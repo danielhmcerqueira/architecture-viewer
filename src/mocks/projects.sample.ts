@@ -12,7 +12,7 @@ export const sampleProjectHistory: ProjectSummary[] = [
     updated_at: "2026-07-21T16:40:00Z",
     last_diagram_version: 3,
     last_diagram_generated_at: "2026-07-21T17:02:00Z",
-    last_diagram_file_name: "42-arquitetura.drawio",
+    last_diagram_file_name: "42-arquitetura.html",
   },
   {
     id: "03",
@@ -22,7 +22,7 @@ export const sampleProjectHistory: ProjectSummary[] = [
     updated_at: "2026-07-19T09:15:00Z",
     last_diagram_version: 1,
     last_diagram_generated_at: "2026-07-19T09:40:00Z",
-    last_diagram_file_name: "03-arquitetura.drawio",
+    last_diagram_file_name: "03-arquitetura.html",
   },
   {
     id: "02",
@@ -32,7 +32,7 @@ export const sampleProjectHistory: ProjectSummary[] = [
     updated_at: "2026-07-10T14:02:00Z",
     last_diagram_version: 1,
     last_diagram_generated_at: "2026-07-11T08:20:00Z",
-    last_diagram_file_name: "02-arquitetura.drawio",
+    last_diagram_file_name: "02-arquitetura.html",
   },
   {
     id: "07",

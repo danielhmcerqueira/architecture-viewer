@@ -221,7 +221,7 @@ function DiagramPage() {
             <SectionLabel index="01" title="Iniciar geração" />
             <p className="mt-3 max-w-xl text-sm opacity-70">
               A arquitetura aprovada é enviada ao backend, que devolve um
-              arquivo <span className="font-mono">.drawio</span>. Nada é
+              arquivo <span className="font-mono">.html</span>. Nada é
               validado automaticamente por esta interface.
             </p>
             <div className="mt-5">
@@ -405,7 +405,7 @@ function ResultCard({
             style={iebtPrimaryButtonStyle}
           >
             <Download className="h-4 w-4" />
-            Baixar .drawio
+            Baixar .html
           </Button>
         </div>
 
