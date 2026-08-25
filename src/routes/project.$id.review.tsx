@@ -204,7 +204,7 @@ function ReviewScreen({
         style={{ background: "var(--iebt-paper)", color: "var(--iebt-ink)" }}
       >
         <div className="mx-auto max-w-5xl space-y-6">
-          <ProjectHeader />
+
 
           <Tabs value={tab} onValueChange={setTab}>
             <TabsList
